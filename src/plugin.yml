@@ -1,0 +1,22 @@
+name: TheTowersGE
+main: io.github.galaipa.TheTowersGE
+version: 1.0
+author: Galaipa 
+description: BuildBattle minigame plugin
+softdepend: [WorldEdit,WorldGuard,Vault,PlayerPoints]
+commands:
+  thetowers:
+    description: TT main command
+    usage: /<command>  
+    aliases: [tt]
+  thetowersadmin:
+    description: TT admin command
+    usage: /<command>  
+    aliases: [ttadmin]  
+permissions:
+  tt.user:
+    description: Perm to use all user commands
+    default: true
+  tt.admin:
+    description: Perm to use /ttadmin commands
+    default: op
