@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -38,7 +39,7 @@ public class GameListener implements Listener{
             }
         } 
           }
-      @EventHandler
+      @EventHandler(priority = EventPriority.HIGHEST) 
       public void onRespawn(PlayerRespawnEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){

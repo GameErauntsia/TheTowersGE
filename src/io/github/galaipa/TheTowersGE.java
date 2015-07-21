@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
+import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -18,6 +19,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -46,6 +48,7 @@ public class TheTowersGE extends JavaPlugin{
         saveConfig();
         getServer().getPluginManager().registerEvents(new GameListener(this),this);
         defaultValues();
+        hookPlayerPoints();
     }
     
     @Override
@@ -173,9 +176,17 @@ public class TheTowersGE extends JavaPlugin{
         Broadcast(ChatColor.GREEN + "            TheTowers partida amaitu da         ");
         Broadcast(ChatColor.GREEN + "            Irabazlea: talde" + irabazlea.getID());
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
-        for(Jokalaria j : jokalariak){
+        for(Jokalaria j : irabazlea.getPlayers()){
             j.getPlayer().teleport(lobby);
+            playerPoints.getAPI().give(j.getPlayer().getUniqueId(), 70);
+            j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! 70 puntu irabazi dituzu");
         }
+        for(Jokalaria j : galtzailea.getPlayers()){
+            j.getPlayer().teleport(lobby);
+            playerPoints.getAPI().give(j.getPlayer().getUniqueId(), 20);
+            j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! 20 puntu irabazi dituzu");
+        }
+        
         defaultValues();
         InstantReset irPlugin = (InstantReset) getServer().getPluginManager().getPlugin("InstantReset");
         if (irPlugin!= null && irPlugin.isEnabled()) {
@@ -303,4 +314,11 @@ public class TheTowersGE extends JavaPlugin{
                 Double z22 = getConfig().getDouble("Spawn.lobby.Z");
                 lobby =new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22);
    }
+   
+    private PlayerPoints playerPoints;
+    private boolean hookPlayerPoints() {
+        final Plugin plugin = this.getServer().getPluginManager().getPlugin("PlayerPoints");
+        playerPoints = PlayerPoints.class.cast(plugin);
+        return playerPoints != null; 
+    }
 }
