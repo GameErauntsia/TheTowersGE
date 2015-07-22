@@ -1,6 +1,7 @@
 package io.github.galaipa;
 
 
+import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -11,10 +12,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,17 +30,29 @@ public class GameListener implements Listener{
         private Location l2_blue;
         private Location l1_red;
         private Location l2_red;
-        
+        HashMap<String, Team> map = new HashMap<>();
         public TheTowersGE plugin;
         public GameListener(TheTowersGE instance) {
             plugin = instance;
         }
-        
       @EventHandler
       public void onDeath(PlayerDeathEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getEntity())){
                 e.setDeathMessage("");
+            }
+        } 
+          } 
+    @EventHandler
+        public void noTeamKill(EntityDamageByEntityEvent event){
+        if((event.getEntity() instanceof Player) && (event.getDamager() instanceof Player))
+        if(plugin.inGame){
+            if(plugin.isInGame((Player) event.getEntity())){
+                Jokalaria j1 = plugin.getJokalaria((Player) event.getEntity());
+                Jokalaria j2 = plugin.getJokalaria((Player) event.getDamager());
+                if(j1.getTeam().equals(j2.getTeam())){
+                    event.setCancelled(true);
+                }
             }
         } 
           }
@@ -50,6 +67,30 @@ public class GameListener implements Listener{
             }
         }
       }
+      @EventHandler
+      public void onLeave(PlayerQuitEvent e){
+        if(plugin.inGame){
+            if(plugin.isInGame(e.getPlayer())){
+                map.put(e.getPlayer().getName(), plugin.getJokalaria(e.getPlayer()).getTeam());
+                plugin.jokalariak.remove(plugin.getJokalaria(e.getPlayer()));
+                System.out.println("atera");
+            }
+        }
+      }
+      @EventHandler
+      public void onJoin(PlayerJoinEvent e){
+        if(plugin.inGame){
+            if(map.get(e.getPlayer().getName()) != null){
+                Team t = map.get(e.getPlayer().getName());
+                Jokalaria j = new Jokalaria(e.getPlayer());
+                plugin.jokalariak.add(j);
+                j.setTeam(t);
+                j.getPlayer().teleport(j.getTeam().getSpawn());
+                System.out.println("sartu");
+            }
+        }
+      }
+      
       @EventHandler
       public void onPickUp(PlayerPickupItemEvent e){
         if(plugin.inGame){
@@ -160,5 +201,5 @@ public class GameListener implements Listener{
             metaB.setDisplayName(name);
             b.setItemMeta(metaB);
             return b;
-    }
+    }  
 }

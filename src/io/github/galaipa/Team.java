@@ -10,7 +10,7 @@ public class Team {
     private Location spawnpoint;
     private Color color;
     private Cuboid win;
-    ArrayList<Jokalaria> players;
+    ArrayList<Jokalaria> players = new ArrayList<>();;
     public Team(String n) {
         players = new ArrayList();
 	id = n;

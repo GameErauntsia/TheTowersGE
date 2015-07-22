@@ -47,6 +47,7 @@ public class TheTowersGE extends JavaPlugin{
         getConfig().options().copyDefaults(true);
         saveConfig();
         getServer().getPluginManager().registerEvents(new GameListener(this),this);
+        getServer().getPluginManager().registerEvents(new Gui(this),this);
         defaultValues();
         hookPlayerPoints();
     }
@@ -58,10 +59,18 @@ public class TheTowersGE extends JavaPlugin{
             if(args.length < 1){
                 
             }else if (args[0].equalsIgnoreCase("join")){
-                join(p);
-                return true;
+                if(getJokalaria(p) != null){
+                    p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Dagoeneko bazaude zerrendan");
+                    return true;
+                }else{
+                    Gui.openGui(p);
+                    return true;
+                }
             }else if (args[0].equalsIgnoreCase("leave")){
                 leave(p);
+                return true;
+            }else if (args[0].equalsIgnoreCase("vip")){
+                p.openInventory(Gui.vipGUI);
                 return true;
             }
         }else if(cmd.getName().equalsIgnoreCase("thetowersadmin")){
@@ -88,8 +97,31 @@ public class TheTowersGE extends JavaPlugin{
         inGame = false;
         admin = false;
         jokalariak.clear();    
+        Gui.setGui();
 }
-    public void join(Player p){
+    public void join(Player p, String s){
+        loadLobby();
+        p.teleport(lobby);
+        Jokalaria j = new Jokalaria(p);
+        jokalariak.add(j);
+        if(s.equalsIgnoreCase("ausaz")){
+            if(urdina.getPlayers().size() <= gorria.getPlayers().size()){
+                j.setTeam(urdina);
+                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
+            }else{
+                j.setTeam(gorria);
+                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
+        }
+        }else if (s.equalsIgnoreCase("gorria")){
+                j.setTeam(gorria);
+                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
+        }else{
+                j.setTeam(urdina);
+                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
+        }
+        
+    }
+    /*public void join(Player p){
         loadLobby();
         if(getJokalaria(p) != null){
             p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Dagoeneko bazaude zerrendan");
@@ -108,7 +140,7 @@ public class TheTowersGE extends JavaPlugin{
         }
         j.getPlayer().teleport(lobby);
         }
-    }
+    }*/
     public void leave(Player p){
        Jokalaria j = getJokalaria(p);
        jokalariak.remove(j);
