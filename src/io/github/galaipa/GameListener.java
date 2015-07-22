@@ -7,6 +7,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -45,7 +46,7 @@ public class GameListener implements Listener{
           } 
     @EventHandler
         public void noTeamKill(EntityDamageByEntityEvent event){
-        if((event.getEntity() instanceof Player) && (event.getDamager() instanceof Player))
+        if((event.getEntity() instanceof Player) && (event.getDamager() instanceof Player)){
         if(plugin.inGame){
             if(plugin.isInGame((Player) event.getEntity())){
                 Jokalaria j1 = plugin.getJokalaria((Player) event.getEntity());
@@ -54,7 +55,17 @@ public class GameListener implements Listener{
                     event.setCancelled(true);
                 }
             }
-        } 
+        } }else if (event.getDamager() instanceof Arrow) {
+        if(plugin.inGame){
+            if(plugin.isInGame((Player) event.getEntity())){
+                Jokalaria j1 = plugin.getJokalaria((Player) event.getEntity());
+                Jokalaria j2 = plugin.getJokalaria((Player)(((Arrow)event.getDamager()).getShooter()));
+                if(j1.getTeam().equals(j2.getTeam())){
+                    event.setCancelled(true);
+                }
+            }
+            }
+        }
           }
       @EventHandler(priority = EventPriority.HIGHEST) 
       public void onRespawn(PlayerRespawnEvent e){
