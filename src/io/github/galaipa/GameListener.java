@@ -150,23 +150,43 @@ public class GameListener implements Listener{
                 String izena = p.getItemInHand().getItemMeta().getDisplayName();
                 if(izena.equalsIgnoreCase(ChatColor.GREEN +"Point A (Gorria)")){
                     l1_red = e.getBlock().getLocation();
+                    p.sendMessage("Point A (Gorria)");
                     e.setCancelled(true);
                 }
                 else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Point B (Gorria)")){
                     l2_red = e.getBlock().getLocation();
+                    p.sendMessage("Point B (Gorria)");
                     e.setCancelled(true);
                 }
                 else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Point A (Urdina)")){
                     l1_blue = e.getBlock().getLocation();
+                    p.sendMessage("Point A (Urdina)");
                     e.setCancelled(true);
                 }
                 else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Point B (Urdina)")){
                     l2_blue = e.getBlock().getLocation();
+                    p.sendMessage("Point B (Urdina)");
+                    e.setCancelled(true);
+                }else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Burdina")){
+                    plugin.iron = e.getBlock().getLocation();
+                    p.sendMessage("Burdina");
+                    e.setCancelled(true);
+                }else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Exp")){
+                    plugin.exp = e.getBlock().getLocation();
+                    p.sendMessage("Exp");
+                    e.setCancelled(true);
+                }else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Lobby")){
+                    plugin.lobby = e.getBlock().getLocation();
+                    p.sendMessage("Lobby-a");
                     e.setCancelled(true);
                 }
+                
                 else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Gorde")){
                     plugin.saveSelection("gorria", l1_red, l2_red);
                     plugin.saveSelection("urdina", l1_blue, l2_blue);
+                    plugin.SaveSpawn(plugin.iron, "iron");
+                    plugin.SaveSpawn(plugin.exp, "exp");
+                    plugin.SaveSpawn(plugin.lobby, "lobby");
                     plugin.admin = false;
                     p.getInventory().clear();
                     e.setCancelled(true);
@@ -200,6 +220,9 @@ public class GameListener implements Listener{
            inv.addItem(item(Material.STAINED_CLAY,14,1,ChatColor.GREEN + "Point B (Gorria)"));
            inv.addItem(item(Material.STAINED_CLAY,11,1,ChatColor.GREEN + "Point A (Urdina)"));
            inv.addItem(item(Material.STAINED_CLAY,11,1,ChatColor.GREEN + "Point B (Urdina)"));
+           inv.addItem(item(Material.STAINED_CLAY,7,1,ChatColor.GREEN + "Lobby"));
+           inv.addItem(item(Material.STAINED_CLAY,9,1,ChatColor.GREEN + "Burdina"));
+           inv.addItem(item(Material.STAINED_CLAY,1,1,ChatColor.GREEN + "Exp"));
            inv.addItem(item(Material.STAINED_CLAY,13,1,ChatColor.GREEN + "Gorde"));
            p.updateInventory();
         }

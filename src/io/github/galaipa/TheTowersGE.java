@@ -52,6 +52,7 @@ public class TheTowersGE extends JavaPlugin{
         saveConfig();
         getServer().getPluginManager().registerEvents(new GameListener(this),this);
         getServer().getPluginManager().registerEvents(new Gui(this),this);
+        getServer().getPluginManager().registerEvents(new SignListener(this),this);
         defaultValues();
         hookPlayerPoints();
     }
@@ -87,7 +88,7 @@ public class TheTowersGE extends JavaPlugin{
                 SaveSpawn(p.getLocation(),args[1]);
                 p.sendMessage("Spawn set");
                 return true;
-            }else if (args[0].equalsIgnoreCase("win")){
+            }else if (args[0].equalsIgnoreCase("setup")){
                 admin = true;
                 p.sendMessage("Admin menu");
                 GameListener.adminGui(p);
