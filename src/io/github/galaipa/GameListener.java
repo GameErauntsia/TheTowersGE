@@ -14,7 +14,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -84,7 +83,6 @@ public class GameListener implements Listener{
             if(plugin.isInGame(e.getPlayer())){
                 map.put(e.getPlayer().getName(), plugin.getJokalaria(e.getPlayer()).getTeam());
                 plugin.jokalariak.remove(plugin.getJokalaria(e.getPlayer()));
-                System.out.println("atera");
             }
         }
       }
@@ -97,7 +95,6 @@ public class GameListener implements Listener{
                 plugin.jokalariak.add(j);
                 j.setTeam(t);
                 j.getPlayer().teleport(j.getTeam().getSpawn());
-                System.out.println("sartu");
             }
         }
       }

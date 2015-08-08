@@ -13,6 +13,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -41,6 +42,9 @@ public class TheTowersGE extends JavaPlugin{
     Score scoreGorria;
     String taldea = "urdina";
     Location lobby;
+    Location exp;
+    Location iron;
+    int spawners;
     @Override
     public void onEnable(){
         defaultValues();
@@ -147,6 +151,9 @@ public class TheTowersGE extends JavaPlugin{
        j.getTeam().removePlayer(j);
        p.teleport(lobby);
        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
+       if(jokalariak.isEmpty()){
+           reset();
+       }
     }
     public void teleportSpawn(){
         for(Jokalaria j : jokalariak){
@@ -184,11 +191,21 @@ public class TheTowersGE extends JavaPlugin{
                     Broadcast(ChatColor.GREEN + "-----------------------------------------------");
                     teleportSpawn();
                     setScoreBoard();
+                    Spawners();
                     }
                     }
                     };task.runTaskTimer(this, 0L, 20L);
 
             }
+    public void Spawners(){
+        spawners = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+            World w = urdina.getSpawn().getWorld();
+            public void run(){  
+                w.dropItemNaturally(exp, new ItemStack(Material.EXP_BOTTLE));
+                w.dropItemNaturally(iron, new ItemStack(Material.IRON_INGOT));
+            }
+        }, 0, 60);
+    }
     public void setScoreBoard(){
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
@@ -218,8 +235,11 @@ public class TheTowersGE extends JavaPlugin{
             playerPoints.getAPI().give(j.getPlayer().getUniqueId(), 20);
             j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! 20 puntu irabazi dituzu");
         }
-        
+        reset();
+    }
+    public void reset(){
         defaultValues();
+        Bukkit.getScheduler().cancelTask(spawners); 
         InstantReset irPlugin = (InstantReset) getServer().getPluginManager().getPlugin("InstantReset");
         if (irPlugin!= null && irPlugin.isEnabled()) {
             InstantResetWorld world = irPlugin.getInstantResetWorld(getConfig().getString("Win.urdina.World"));
@@ -345,7 +365,16 @@ public class TheTowersGE extends JavaPlugin{
                 Double y22 = getConfig().getDouble("Spawn.lobby.Y");
                 Double z22 = getConfig().getDouble("Spawn.lobby.Z");
                 lobby =new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22);
+                Double x = getConfig().getDouble("Spawn.exp.X");
+                Double y = getConfig().getDouble("Spawn.exp.Y");
+                Double z = getConfig().getDouble("Spawn.exp.Z");
+                exp =new Location(Bukkit.getServer().getWorld(w22), x, y, z);
+                Double x2 = getConfig().getDouble("Spawn.iron.X");
+                Double y2 = getConfig().getDouble("Spawn.iron.Y");
+                Double z2 = getConfig().getDouble("Spawn.iron.Z");
+                iron =new Location(Bukkit.getServer().getWorld(w22), x2, y2, z2);
    }
+   
    
     private PlayerPoints playerPoints;
     private boolean hookPlayerPoints() {
