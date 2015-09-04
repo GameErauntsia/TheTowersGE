@@ -1,6 +1,7 @@
 package io.github.galaipa;
 
 import static io.github.galaipa.GameListener.item;
+import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,6 +15,9 @@ import org.bukkit.inventory.ItemStack;
 
 
 public class Gui implements Listener {
+    static int a = 0;
+    static int b = 0;
+    ArrayList<Player> botoa = new ArrayList<>();
      public TheTowersGE plugin;
     public Gui(TheTowersGE instance) {
             plugin = instance;
@@ -76,8 +80,7 @@ public class Gui implements Listener {
                 } else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.YELLOW + "Ordua")){
                     player.openInventory(orduaGUI);
                 } else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.YELLOW + "Mapa")){
-                    player.closeInventory();
-                    player.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Oraindik ez dago erabilgarri");
+                    player.openInventory(mapaGUI);
                 }
         }else if (event.getInventory().getName().equals(eguraldiaGUI.getName())) {
                 ItemStack clicked = event.getCurrentItem(); 
@@ -105,9 +108,26 @@ public class Gui implements Listener {
                     world.setTime(20000);
                 }
                 player.closeInventory();
+        }else if (event.getInventory().getName().equals(eguraldiaGUI.getName())) {
+                ItemStack clicked = event.getCurrentItem(); 
+                event.setCancelled(true);
+                if(botoa.contains(player)){
+                    player.closeInventory();
+                    player.sendMessage("Botoa behin bakarrik eman dezakezu");
+                    return;
+                }
+                if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.YELLOW + "Klasikoa")){
+                    a++;
+                    botoa.add(player);
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.YELLOW +"Mapa klasikoa aukeratu duzu");
+                } else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.YELLOW + "Klasikoa")){
+                    b++;
+                    botoa.add(player);
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.YELLOW +"Remake mapa aukeratu duzu");
+                }
         }
-        
-        
     }
     public static Inventory vipGUI = Bukkit.createInventory(null, 9, ChatColor.RED +"TheTowers: Vip aukerak");
     public  static void setGuiVip() {
@@ -149,5 +169,16 @@ public class Gui implements Listener {
         orduaGUI.setItem(7,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
         orduaGUI.setItem(8,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
     }   
-
+    public static Inventory mapaGUI = Bukkit.createInventory(null, 9, ChatColor.RED +"TT Vip aukerak : Mapa");
+    public  static void setGuiMapa() {
+        mapaGUI.setItem(0,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
+        mapaGUI.setItem(1,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
+        mapaGUI.setItem(2,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
+        mapaGUI.setItem(3,item(Material.NETHER_BRICK,1,1,ChatColor.YELLOW + "Klasikoa"));
+        mapaGUI.setItem(4,item(Material.GRASS,1,1,ChatColor.YELLOW + "Remake"));
+       // mapaGUI.setItem(5,item(Material.WOOL,15,1,ChatColor.YELLOW + "Gaua"));
+        mapaGUI.setItem(6,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
+        mapaGUI.setItem(7,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
+        mapaGUI.setItem(8,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
+    }
 }

@@ -1,6 +1,7 @@
 
 package io.github.galaipa;
 
+import de.goldengamerzone.worldreset.WorldReset;
 import static io.github.galaipa.GameListener.item;
 import java.util.ArrayList;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
@@ -28,8 +29,6 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
-import org.cyberiantiger.minecraft.instantreset.InstantReset;
-import org.cyberiantiger.minecraft.instantreset.InstantResetWorld;
 
 
 public class TheTowersGE extends JavaPlugin{
@@ -45,6 +44,7 @@ public class TheTowersGE extends JavaPlugin{
     Location exp;
     Location iron;
     int spawners;
+    Scoreboard board;
     @Override
     public void onEnable(){
         defaultValues();
@@ -85,13 +85,18 @@ public class TheTowersGE extends JavaPlugin{
                 start();
                 return true;
             }else if (args[0].equalsIgnoreCase("spawn")){
-                SaveSpawn(p.getLocation(),args[1]);
+                SaveSpawn(args[2],p.getLocation(),args[1]);
                 p.sendMessage("Spawn set");
                 return true;
             }else if (args[0].equalsIgnoreCase("setup")){
                 admin = true;
                 p.sendMessage("Admin menu");
-                GameListener.adminGui(p);
+                GameListener.adminGui(p,args[1]);
+            }else if(args[0].equalsIgnoreCase("join")){
+                Player p2 = Bukkit.getServer().getPlayer(args[1]);
+                join(p2,args[2]);
+                p.sendMessage(args[1] + "jokalaria talde" + args[2]+ "-an sartu duzu");
+                return true;
             }
         }
         return false;
@@ -166,19 +171,34 @@ public class TheTowersGE extends JavaPlugin{
         }
     }
              public void start(){
-                    loadSelection(urdina);
-                    loadSelection(gorria);
+                 String arena = "a";
+                  /*  String arena = "";
+                    if(Gui.a == Gui.b){
+                       List<String> randomStrings = new LinkedList<String>();
+                       randomStrings.add("a");
+                       randomStrings.add("b");
+                       Collections.shuffle(randomStrings);
+                       arena = randomStrings.get(0);
+                    }else if (Gui.a > Gui.b){
+                        arena = "a";
+                    }else{
+                        arena = "b";
+                    }*/
+                    loadSpawners(arena);
+                    loadSelection(urdina,arena);
+                    loadSelection(gorria,arena);
                     inGame = true;
                     Broadcast(ChatColor.GREEN +"[TheTowers]" + ChatColor.GREEN + "Jokoa orain hasiko da");
                     BukkitRunnable task = new BukkitRunnable() {
                     int countdown = 10;
+                    @Override
                     public void run(){
                     for(Jokalaria j : jokalariak){
                         Player p = j.getPlayer();
                         p.setLevel(countdown);
-                        p.sendMessage(ChatColor.GREEN + " " + countdown);
+                       // p.sendMessage(ChatColor.GREEN + " " + countdown);
                         p.getWorld().playSound(p.getLocation(),Sound.NOTE_STICKS, 10, 1);
-                        sendTitle(p,20,40,20,Integer.toString(countdown),"");
+                        sendTitle(p,20,40,20,ChatColor.YELLOW + Integer.toString(countdown),"");
                     }
                     countdown--;
                     if (countdown < 0) {
@@ -209,7 +229,7 @@ public class TheTowersGE extends JavaPlugin{
     }
     public void setScoreBoard(){
         ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
+        board = manager.getNewScoreboard();
         Objective objective = board.registerNewObjective("The Towers", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(ChatColor.GOLD +"The Towers");
@@ -224,7 +244,7 @@ public class TheTowersGE extends JavaPlugin{
     public void amaiera(Team irabazlea, Team galtzailea){
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
         Broadcast(ChatColor.GREEN + "            TheTowers partida amaitu da         ");
-        Broadcast(ChatColor.GREEN + "            Irabazlea: talde" + irabazlea.getID());
+        Broadcast(ChatColor.GREEN + "            Irabazlea: talde " + irabazlea.getID());
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
         for(Jokalaria j : irabazlea.getPlayers()){
             j.getPlayer().teleport(lobby);
@@ -241,13 +261,7 @@ public class TheTowersGE extends JavaPlugin{
     public void reset(){
         defaultValues();
         Bukkit.getScheduler().cancelTask(spawners); 
-        InstantReset irPlugin = (InstantReset) getServer().getPluginManager().getPlugin("InstantReset");
-        if (irPlugin!= null && irPlugin.isEnabled()) {
-            InstantResetWorld world = irPlugin.getInstantResetWorld(getConfig().getString("Win.urdina.World"));
-            if (world != null) {
-                irPlugin.resetWorld(world);
-            }
-        }
+        WorldReset.resetWorld("TheTowersMapa");
     }
         
     
@@ -274,6 +288,7 @@ public class TheTowersGE extends JavaPlugin{
             ItemStack i = new ItemStack(m, 1);
             LeatherArmorMeta meta = (LeatherArmorMeta) i.getItemMeta();
             meta.setColor(c);
+            meta.setDisplayName("Arropa");
             i.setItemMeta(meta);
             return i;
         }
@@ -324,56 +339,59 @@ public class TheTowersGE extends JavaPlugin{
         }
         return null;
     }
-   public void saveSelection(String id, Location l1, Location l2){
-                getConfig().set("Win." + id + ".World", l1.getWorld().getName());
-                getConfig().set("Win." + id + ".Min.x", l1.getX());
-                getConfig().set("Win." + id + ".Min.y", l1.getY());
-                getConfig().set("Win." + id + ".Min.z", l1.getZ());
+   public void saveSelection(String arena,String id, Location l1, Location l2){
+                getConfig().set(arena + ".Win." + id + ".World", l1.getWorld().getName());
+                getConfig().set(arena + ".Win." + id + ".Min.x", l1.getX());
+                getConfig().set(arena + ".Win." + id + ".Min.y", l1.getY());
+                getConfig().set(arena + ".Win." + id + ".Min.z", l1.getZ());
                 
-                getConfig().set("Win." + id + ".Max.x", l2.getX());
-                getConfig().set("Win." + id + ".Max.y", l2.getY());
-                getConfig().set("Win." + id + ".Max.z", l2.getZ());
+                getConfig().set(arena + ".Win." + id + ".Max.x", l2.getX());
+                getConfig().set(arena + ".Win." + id + ".Max.y", l2.getY());
+                getConfig().set(arena + ".Win." + id + ".Max.z", l2.getZ());
                 saveConfig();
     }
-    public void loadSelection(Team s){
-                String w22 = getConfig().getString("Spawn." + s.getID() +".World");
-                Double x22 = getConfig().getDouble("Spawn." + s.getID() +".X");
-                Double y22 = getConfig().getDouble("Spawn." + s.getID() +".Y");
-                Double z22 = getConfig().getDouble("Spawn." + s.getID() +".Z");
+    public void loadSelection(Team s, String arena){
+                String w22 = getConfig().getString(arena + ".Spawn." + s.getID() +".World");
+                Double x22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".X");
+                Double y22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".Y");
+                Double z22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".Z");
                 s.setSpawn(new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22));
                 
-                String w = getConfig().getString("Win." + s.getID() + ".World");
-                Double x = getConfig().getDouble("Win." + s.getID() + ".Min.x");
-                Double y= getConfig().getDouble("Win." + s.getID() + ".Min.y");
-                Double z = getConfig().getDouble("Win." + s.getID() + ".Min.z");
-                Double x2 = getConfig().getDouble("Win." + s.getID() + ".Max.x");
-                Double y2= getConfig().getDouble("Win." + s.getID() + ".Max.y");
-                Double z2 = getConfig().getDouble("Win." + s.getID() + ".Max.z");
+                String w = getConfig().getString(arena + ".Win." + s.getID() + ".World");
+                Double x = getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.x");
+                Double y= getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.y");
+                Double z = getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.z");
+                Double x2 = getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.x");
+                Double y2= getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.y");
+                Double z2 = getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.z");
                 Location l1 = new Location(Bukkit.getServer().getWorld(w), x, y, z);
                 Location l2 = new Location(Bukkit.getServer().getWorld(w), x2, y2, z2);
                 s.setWin(l1, l2);
     }
-   public void SaveSpawn(Location l,String t){;
-                getConfig().set("Spawn."+ t +".World", l.getWorld().getName());
-                getConfig().set("Spawn."+ t +".X", l.getX());
-                getConfig().set("Spawn."+ t +".Y", l.getY());
-                getConfig().set("Spawn."+ t +".Z", l.getZ());
+   public void SaveSpawn(String arena, Location l,String t){;
+                getConfig().set(arena + ".Spawn."+ t +".World", l.getWorld().getName());
+                getConfig().set(arena + ".Spawn."+ t +".X", l.getX());
+                getConfig().set(arena + ".Spawn."+ t +".Y", l.getY());
+                getConfig().set(arena + ".Spawn."+ t +".Z", l.getZ());
                 saveConfig();
    }
    public void loadLobby(){
-                String w22 = getConfig().getString("Spawn.lobby.World");
-                Double x22 = getConfig().getDouble("Spawn.lobby.X");
-                Double y22 = getConfig().getDouble("Spawn.lobby.Y");
-                Double z22 = getConfig().getDouble("Spawn.lobby.Z");
+                String w22 = getConfig().getString("Lobby.World");
+                Double x22 = getConfig().getDouble("Lobby.X");
+                Double y22 = getConfig().getDouble("Lobby.Y");
+                Double z22 = getConfig().getDouble("Lobby.Z");
                 lobby =new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22);
-                Double x = getConfig().getDouble("Spawn.exp.X");
-                Double y = getConfig().getDouble("Spawn.exp.Y");
-                Double z = getConfig().getDouble("Spawn.exp.Z");
-                exp =new Location(Bukkit.getServer().getWorld(w22), x, y, z);
-                Double x2 = getConfig().getDouble("Spawn.iron.X");
-                Double y2 = getConfig().getDouble("Spawn.iron.Y");
-                Double z2 = getConfig().getDouble("Spawn.iron.Z");
-                iron =new Location(Bukkit.getServer().getWorld(w22), x2, y2, z2);
+   }
+   public void loadSpawners(String arena){
+        String w= getConfig().getString(arena + ".Spawn.exp.World");
+        Double x = getConfig().getDouble(arena + ".Spawn.exp.X");
+        Double y = getConfig().getDouble(arena + ".Spawn.exp.Y");
+        Double z = getConfig().getDouble(arena + ".Spawn.exp.Z");
+        exp =new Location(Bukkit.getServer().getWorld(w), x, y, z);
+        Double x2 = getConfig().getDouble(arena + ".Spawn.iron.X");
+        Double y2 = getConfig().getDouble(arena + ".Spawn.iron.Y");
+        Double z2 = getConfig().getDouble(arena + ".Spawn.iron.Z");
+        iron =new Location(Bukkit.getServer().getWorld(w), x2, y2, z2);
    }
    
    

@@ -30,6 +30,7 @@ public class GameListener implements Listener{
         private Location l2_blue;
         private Location l1_red;
         private Location l2_red;
+        static String arena2;
         HashMap<String, Team> map = new HashMap<>();
         public TheTowersGE plugin;
         public GameListener(TheTowersGE instance) {
@@ -39,7 +40,11 @@ public class GameListener implements Listener{
       public void onDeath(PlayerDeathEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getEntity())){
+                Player killed = e.getEntity();
                 e.setDeathMessage("");
+                if(killed.getKiller() != null && killed.getKiller() instanceof Player){
+                    plugin.Broadcast(ChatColor.YELLOW + killed.getKiller().getName() + "-(e)k " + killed.getName() + " hil du");
+                }
             }
         } 
           } 
@@ -74,6 +79,7 @@ public class GameListener implements Listener{
                 e.setRespawnLocation(j.getTeam().getSpawn());
                 plugin.setArmour(j);
                 plugin.giveItems(j);
+                e.getPlayer().setScoreboard(plugin.board);
             }
         }
       }
@@ -104,14 +110,8 @@ public class GameListener implements Listener{
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
                 ItemStack i = e.getItem().getItemStack();
-                if(i.equals(plugin.getColorArmor(Material.LEATHER_HELMET,Color.BLUE)) ||
-                    i.equals(plugin.getColorArmor(Material.LEATHER_CHESTPLATE,Color.BLUE))||
-                    i.equals(plugin.getColorArmor(Material.LEATHER_LEGGINGS,Color.BLUE))||
-                    i.equals(plugin.getColorArmor(Material.LEATHER_BOOTS,Color.BLUE))||
-                    i.equals(plugin.getColorArmor(Material.LEATHER_HELMET,Color.RED))||
-                    i.equals(plugin.getColorArmor(Material.LEATHER_BOOTS,Color.RED))||
-                    i.equals(plugin.getColorArmor(Material.LEATHER_BOOTS,Color.RED))||
-                    i.equals(plugin.getColorArmor(Material.LEATHER_BOOTS,Color.RED))){
+                if(i.hasItemMeta() && i.getItemMeta().hasDisplayName() && i.getItemMeta().getDisplayName().equalsIgnoreCase("Arropa")){
+                    e.getItem().remove();
                     e.setCancelled(true);
                 }
             }
@@ -125,12 +125,14 @@ public class GameListener implements Listener{
                         e.getPlayer().teleport(plugin.getJokalaria(e.getPlayer()).getTeam().getSpawn());
                         if(plugin.getJokalaria(e.getPlayer()).getTeam().getID().equalsIgnoreCase("urdina")){
                            plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
+                           plugin.Broadcast(ChatColor.BLUE + "Talde urdinak tantoa egin du");
                            if(plugin.scoreUrdina.getScore() == 10){
                                plugin.amaiera(plugin.urdina,plugin.gorria);
                            }
                         }
                         else{
                             plugin.scoreGorria.setScore((plugin.scoreGorria.getScore()+1));
+                            plugin.Broadcast(ChatColor.RED + "Talde gorriak tantoa egin du");
                              if(plugin.scoreGorria.getScore() == 10){
                                        plugin.amaiera(plugin.gorria,plugin.urdina);
                                    }
@@ -182,11 +184,11 @@ public class GameListener implements Listener{
                 }
                 
                 else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Gorde")){
-                    plugin.saveSelection("gorria", l1_red, l2_red);
-                    plugin.saveSelection("urdina", l1_blue, l2_blue);
-                    plugin.SaveSpawn(plugin.iron, "iron");
-                    plugin.SaveSpawn(plugin.exp, "exp");
-                    plugin.SaveSpawn(plugin.lobby, "lobby");
+                    plugin.saveSelection(arena2,"gorria", l1_red, l2_red);
+                    plugin.saveSelection(arena2,"urdina", l1_blue, l2_blue);
+                    plugin.SaveSpawn(arena2,plugin.iron, "iron");
+                    plugin.SaveSpawn(arena2,plugin.exp, "exp");
+                    plugin.SaveSpawn(arena2,plugin.lobby, "lobby");
                     plugin.admin = false;
                     p.getInventory().clear();
                     e.setCancelled(true);
@@ -205,6 +207,9 @@ public class GameListener implements Listener{
                         }
                       else if(event.getMessage().toLowerCase().startsWith("/t")){
                         }
+                      else if(p.hasPermission("tt.admin")){
+                          
+                      }
                       else{
                        event.setCancelled(true);
                        p.sendMessage(ChatColor.GREEN +"[TheTowers]" + ChatColor.RED + "You can't use command during the game");
@@ -213,7 +218,8 @@ public class GameListener implements Listener{
               }
           }
       }
-        public static void adminGui(Player p){
+        public static void adminGui(Player p, String arena){
+           arena2 = arena;
            p.getInventory().clear();
            Inventory inv = p.getInventory();
            inv.addItem(item(Material.STAINED_CLAY,14,1,ChatColor.GREEN + "Point A (Gorria)"));
