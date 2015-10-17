@@ -9,7 +9,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -180,5 +182,61 @@ public class Gui implements Listener {
         mapaGUI.setItem(6,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
         mapaGUI.setItem(7,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
         mapaGUI.setItem(8,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Vip ezarpenak"));
+    }
+    public static void maingui(Jokalaria j){
+        int i;
+        if(j.getTeam().getID().equalsIgnoreCase("urdina")){
+            i = 11;
+        }else{
+            i = 14;
+        }
+        Inventory inv = j.getPlayer().getInventory();
+        inv.setItem(0,item(Material.STAINED_GLASS_PANE,i,1,ChatColor.GREEN + "Game Erauntsia TheTowers"));
+        inv.setItem(1,item(Material.STAINED_GLASS_PANE,i,1,ChatColor.GREEN + "Game Erauntsia TheTowers"));
+        inv.setItem(2,item(Material.STAINED_GLASS_PANE,i,1,ChatColor.GREEN + "Game Erauntsia TheTowers"));
+        inv.setItem(3,item(Material.STAINED_CLAY,14,1,ChatColor.YELLOW + "Jokoa hasteko bozkatu"));
+        inv.setItem(4,item(Material.STAINED_GLASS_PANE,i,1,ChatColor.GREEN + "Game Erauntsia TheTowers"));
+        inv.setItem(5,item(Material.BARRIER,0,1,ChatColor.RED  + "Jokotik irten"));
+        inv.setItem(6,item(Material.STAINED_GLASS_PANE,i,1,ChatColor.GREEN + "Game Erauntsia TheTowers"));
+        inv.setItem(7,item(Material.STAINED_GLASS_PANE,i,1,ChatColor.GREEN + "Game Erauntsia TheTowers"));
+        inv.setItem(8,item(Material.STAINED_GLASS_PANE,i,1,ChatColor.GREEN + "Game Erauntsia TheTowers"));
+    }
+    
+      @EventHandler
+      public void onInventoryClick2(PlayerInteractEvent event){
+          if(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK ){
+              Player p = event.getPlayer();
+              if(plugin.isInGame(p)){
+              if(p.getItemInHand() != null && p.getItemInHand().hasItemMeta() && p.getItemInHand().getItemMeta().hasDisplayName()){
+                   if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.YELLOW  +"Jokoa hasteko bozkatu")){
+                      event.setCancelled(true);
+                      p.getInventory().setItem(3,item(Material.STAINED_CLAY,5,1,ChatColor.GREEN + "Jokoa hasteko bozkatu duzu"));
+                      bozkatu(p);
+                  }else if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED  +"Jokotik irten")){
+                      event.setCancelled(true);
+                      plugin.leave(p);
+                  }else if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN  +"Game Erauntsia TheTowers")){
+                      event.setCancelled(true);
+                  }else if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Jokoa hasteko bozkatu duzu")){
+                      event.setCancelled(true);
+                  }
+          }
+              }
+          }
+      }
+    public void bozkatu(Player p){
+        
+        plugin.bozkak++;
+        p.sendMessage(ChatColor.GREEN +"[TheTowers] " + ChatColor.YELLOW + "Jokoa hasteko bozkatu duzu. Jokalarien %60ak bozkatzean hasiko da");
+        
+        if(plugin.jokalariak.size() == 1){
+            
+        }else if(plugin.bozketa){
+            
+        }
+        else if(plugin.bozkak *100 / plugin.jokalariak.size() > 60){
+            plugin.bozketa = true;
+            plugin.start();
+        }
     }
 }

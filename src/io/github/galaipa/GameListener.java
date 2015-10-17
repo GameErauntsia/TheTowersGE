@@ -3,7 +3,6 @@ package io.github.galaipa;
 
 import java.util.HashMap;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,10 +15,8 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -83,7 +80,7 @@ public class GameListener implements Listener{
             }
         }
       }
-      @EventHandler
+  /*    @EventHandler
       public void onLeave(PlayerQuitEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
@@ -103,7 +100,7 @@ public class GameListener implements Listener{
                 j.getPlayer().teleport(j.getTeam().getSpawn());
             }
         }
-      }
+      }*/
       
       @EventHandler
       public void onPickUp(PlayerPickupItemEvent e){
@@ -125,14 +122,14 @@ public class GameListener implements Listener{
                         e.getPlayer().teleport(plugin.getJokalaria(e.getPlayer()).getTeam().getSpawn());
                         if(plugin.getJokalaria(e.getPlayer()).getTeam().getID().equalsIgnoreCase("urdina")){
                            plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
-                           plugin.Broadcast(ChatColor.BLUE + "Talde urdinak tantoa egin du");
+                           plugin.Broadcast(ChatColor.BLUE + "Talde urdinak tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
                            if(plugin.scoreUrdina.getScore() == 10){
                                plugin.amaiera(plugin.urdina,plugin.gorria);
                            }
                         }
                         else{
                             plugin.scoreGorria.setScore((plugin.scoreGorria.getScore()+1));
-                            plugin.Broadcast(ChatColor.RED + "Talde gorriak tantoa egin du");
+                            plugin.Broadcast(ChatColor.RED + "Talde gorriak tantoa egin du (" + plugin.scoreGorria.getScore() + ")");
                              if(plugin.scoreGorria.getScore() == 10){
                                        plugin.amaiera(plugin.gorria,plugin.urdina);
                                    }

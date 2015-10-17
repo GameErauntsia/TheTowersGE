@@ -36,7 +36,7 @@ public class TheTowersGE extends JavaPlugin{
     Team urdina;
     Team gorria;
     Boolean admin;
-    Boolean inGame;
+    Boolean inGame = false;
     Score scoreUrdina;
     Score scoreGorria;
     String taldea = "urdina";
@@ -45,6 +45,8 @@ public class TheTowersGE extends JavaPlugin{
     Location iron;
     int spawners;
     Scoreboard board;
+    public int bozkak;
+    public Boolean bozketa;
     @Override
     public void onEnable(){
         defaultValues();
@@ -108,6 +110,8 @@ public class TheTowersGE extends JavaPlugin{
         admin = false;
         jokalariak.clear();    
         Gui.setGui();
+        bozkak = 0;
+        bozketa = false;
 }
     public void join(Player p, String s){
         loadLobby();
@@ -129,6 +133,8 @@ public class TheTowersGE extends JavaPlugin{
                 j.setTeam(urdina);
                 p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
         }
+        setArmour(j);
+        Gui.maingui(j);
         
     }
     /*public void join(Player p){
@@ -157,6 +163,8 @@ public class TheTowersGE extends JavaPlugin{
        j.getTeam().removePlayer(j);
        p.teleport(lobby);
        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
+       p.getInventory().clear();
+       p.getInventory().setArmorContents(null);
        if(jokalariak.isEmpty()){
            reset();
        }
@@ -248,13 +256,17 @@ public class TheTowersGE extends JavaPlugin{
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
         for(Jokalaria j : irabazlea.getPlayers()){
             j.getPlayer().teleport(lobby);
-            playerPoints.getAPI().give(j.getPlayer().getUniqueId(), 70);
+            getPlayerPoints().getAPI().give(j.getPlayer().getUniqueId(), 70);
             j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! 70 puntu irabazi dituzu");
+            j.getPlayer().getInventory().clear();
+            j.getPlayer().getInventory().setArmorContents(null);
         }
         for(Jokalaria j : galtzailea.getPlayers()){
             j.getPlayer().teleport(lobby);
-            playerPoints.getAPI().give(j.getPlayer().getUniqueId(), 20);
+            getPlayerPoints().getAPI().give(j.getPlayer().getUniqueId(), 20);
             j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! 20 puntu irabazi dituzu");
+            j.getPlayer().getInventory().clear();
+            j.getPlayer().getInventory().setArmorContents(null);
         }
         reset();
     }
@@ -397,8 +409,11 @@ public class TheTowersGE extends JavaPlugin{
    
     private PlayerPoints playerPoints;
     private boolean hookPlayerPoints() {
-        final Plugin plugin = this.getServer().getPluginManager().getPlugin("PlayerPoints");
+        final Plugin plugin = getServer().getPluginManager().getPlugin("PlayerPoints");
         playerPoints = PlayerPoints.class.cast(plugin);
         return playerPoints != null; 
+    }
+    public PlayerPoints getPlayerPoints() {
+        return playerPoints;
     }
 }
