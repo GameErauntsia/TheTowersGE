@@ -34,7 +34,7 @@ public class Gui implements Listener {
         joinGUI.setItem(5,item(Material.WOOL,11,1,ChatColor.BLUE + "Talde Urdina"));
         joinGUI.setItem(6,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
         joinGUI.setItem(7,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
-        joinGUI.setItem(8,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
+        joinGUI.setItem(8,item(Material.PUMPKIN,1,1,ChatColor.BLUE + "Ikuslea"));
         setGuiVip();
         setGuiEguraldia();
         setGuiOrdua();
@@ -50,6 +50,10 @@ public class Gui implements Listener {
             if(event.getCurrentItem().getItemMeta() != null ){
                 ItemStack clicked = event.getCurrentItem(); 
                 event.setCancelled(true);
+               /* if(plugin.inGame){
+                    player.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Partida hasita dago");
+                    return;
+                }*/
                 if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.WHITE + "Ausaz aukeratu")){
                     plugin.join(player,"ausaz");
                 }
@@ -68,7 +72,15 @@ public class Gui implements Listener {
                     }else{
                         plugin.join(player,"urdina");
                     }
+                }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.BLUE + "Ikuslea")){
+                    if(plugin.inGame){
+                        player.closeInventory();
+                        plugin.joinSpectator(player);
+                    }else{
+                        player.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Ez da inor jolasten ari");
+                    }
                 }
+                 
         }}else if (event.getInventory().getName().equals(vipGUI.getName())) {
                 ItemStack clicked = event.getCurrentItem(); 
                 event.setCancelled(true);
@@ -123,7 +135,7 @@ public class Gui implements Listener {
                     botoa.add(player);
                     player.closeInventory();
                     player.sendMessage(ChatColor.YELLOW +"Mapa klasikoa aukeratu duzu");
-                } else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.YELLOW + "Klasikoa")){
+                } else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.YELLOW + "Remake")){
                     b++;
                     botoa.add(player);
                     player.closeInventory();

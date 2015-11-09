@@ -15,8 +15,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -80,27 +82,37 @@ public class GameListener implements Listener{
             }
         }
       }
-  /*    @EventHandler
+      @EventHandler
       public void onLeave(PlayerQuitEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
                 map.put(e.getPlayer().getName(), plugin.getJokalaria(e.getPlayer()).getTeam());
-                plugin.jokalariak.remove(plugin.getJokalaria(e.getPlayer()));
+                Jokalaria j = plugin.getJokalaria(e.getPlayer());
+                plugin.jokalariak.remove(j);
+                j.getTeam().removePlayer(j);
             }
         }
       }
       @EventHandler
       public void onJoin(PlayerJoinEvent e){
         if(plugin.inGame){
-            if(map.get(e.getPlayer().getName()) != null){
-                Team t = map.get(e.getPlayer().getName());
+            if(map.get(e.getPlayer().getName()) != null){       
                 Jokalaria j = new Jokalaria(e.getPlayer());
                 plugin.jokalariak.add(j);
-                j.setTeam(t);
-                j.getPlayer().teleport(j.getTeam().getSpawn());
+                j.setTeam(map.get(e.getPlayer().getName()));
+                Player p = j.getPlayer();
+                p.teleport(j.getTeam().getSpawn());
+                p.setHealth(p.getMaxHealth());
+                p.setScoreboard(plugin.board);
+                plugin.setArmour(j);
+                plugin.giveItems(j);
+            }else{
+                e.getPlayer().getInventory().clear();
+                e.getPlayer().getInventory().setArmorContents(null);
+                e.getPlayer().teleport(plugin.mainLobby);
             }
         }
-      }*/
+      }
       
       @EventHandler
       public void onPickUp(PlayerPickupItemEvent e){

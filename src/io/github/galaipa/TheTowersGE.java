@@ -11,6 +11,7 @@ import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -33,6 +34,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 
 public class TheTowersGE extends JavaPlugin{
     ArrayList<Jokalaria> jokalariak = new ArrayList<>();
+    ArrayList<Player> ikusleak = new ArrayList<>();
     Team urdina;
     Team gorria;
     Boolean admin;
@@ -41,6 +43,7 @@ public class TheTowersGE extends JavaPlugin{
     Score scoreGorria;
     String taldea = "urdina";
     Location lobby;
+    Location mainLobby = new Location(getServer().getWorld("Jokoak"),1639,4,94);
     Location exp;
     Location iron;
     int spawners;
@@ -67,14 +70,20 @@ public class TheTowersGE extends JavaPlugin{
                 
             }else if (args[0].equalsIgnoreCase("join")){
                 if(getJokalaria(p) != null){
-                    p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Dagoeneko bazaude zerrendan");
+                    p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Dagoeneko bazaude sartuta");
                     return true;
                 }else{
                     Gui.openGui(p);
                     return true;
                 }
             }else if (args[0].equalsIgnoreCase("leave")){
-                leave(p);
+                if(ikusleak.contains(p)){
+                    leaveSpectator(p);
+                }else if(jokalariak.contains(getJokalaria(p))){
+                    leave(p);
+                }else{
+                     p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Ez zaude partidan");
+                }
                 return true;
             }else if (args[0].equalsIgnoreCase("vip")){
                 p.openInventory(Gui.vipGUI);
@@ -109,6 +118,7 @@ public class TheTowersGE extends JavaPlugin{
         inGame = false;
         admin = false;
         jokalariak.clear();    
+        ikusleak.clear();
         Gui.setGui();
         bozkak = 0;
         bozketa = false;
@@ -136,6 +146,17 @@ public class TheTowersGE extends JavaPlugin{
         setArmour(j);
         Gui.maingui(j);
         
+    }public void joinSpectator(Player p){
+        ikusleak.add(p);
+        p.teleport(exp);
+        p.setGameMode(GameMode.SPECTATOR);
+        p.setScoreboard(board);
+        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Ikusle bezala sartu zara");
+    }public void leaveSpectator(Player p){
+        ikusleak.remove(p);
+        p.teleport(mainLobby);
+      //  p.setGameMode(GameMode.SURVIVAL);
+        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
     }
     /*public void join(Player p){
         loadLobby();
@@ -161,7 +182,7 @@ public class TheTowersGE extends JavaPlugin{
        Jokalaria j = getJokalaria(p);
        jokalariak.remove(j);
        j.getTeam().removePlayer(j);
-       p.teleport(lobby);
+       p.teleport(mainLobby);
        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
        p.getInventory().clear();
        p.getInventory().setArmorContents(null);
@@ -172,6 +193,8 @@ public class TheTowersGE extends JavaPlugin{
     public void teleportSpawn(){
         for(Jokalaria j : jokalariak){
             Player p = j.getPlayer();
+            p.getInventory().setArmorContents(null);
+            p.getInventory().clear();
             p.teleport(j.getTeam().getSpawn());
             p.setHealth(p.getMaxHealth());
             setArmour(j); 
@@ -271,6 +294,12 @@ public class TheTowersGE extends JavaPlugin{
         reset();
     }
     public void reset(){
+        for(Player p : ikusleak){
+            if(p.isOnline()){
+                p.teleport(mainLobby);
+                p.setGameMode(GameMode.SURVIVAL);
+            }
+        }
         defaultValues();
         Bukkit.getScheduler().cancelTask(spawners); 
         WorldReset.resetWorld("TheTowersMapa");
@@ -308,6 +337,11 @@ public class TheTowersGE extends JavaPlugin{
               for(Jokalaria j : jokalariak){
                   Player p = j.getPlayer();
                   p.sendMessage(s);
+              }
+              for(Player p : ikusleak){
+                  if(p.isOnline()){
+                    p.sendMessage(s);
+                  }
               }
           }
     public  void sendTitleAll(Integer fadeIn, Integer stay, Integer fadeOut, String title, String subtitle){
