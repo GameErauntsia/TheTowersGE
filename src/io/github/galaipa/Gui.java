@@ -24,20 +24,34 @@ public class Gui implements Listener {
     public Gui(TheTowersGE instance) {
             plugin = instance;
         }
-    public static Inventory joinGUI = Bukkit.createInventory(null, 9, ChatColor.RED +"TheTowers: Aukeratu taldea");
+    public static Inventory joinGUI2 = Bukkit.createInventory(null, 9, ChatColor.RED +"TheTowers: Aukeratu taldea");
+    public static Inventory joinGUI = Bukkit.createInventory(null, 9, ChatColor.RED +"TheTowers");
+    public  static void setGui2() {
+        joinGUI2.setItem(0,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
+        joinGUI2.setItem(1,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
+        joinGUI2.setItem(2,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
+        joinGUI2.setItem(3,item(Material.WOOL,1,1,ChatColor.WHITE + "Ausaz aukeratu"));
+        joinGUI2.setItem(4,item(Material.WOOL,14,1,ChatColor.RED + "Talde Gorria"));
+        joinGUI2.setItem(5,item(Material.WOOL,11,1,ChatColor.BLUE + "Talde Urdina"));
+        joinGUI2.setItem(6,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
+        joinGUI2.setItem(7,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
+        joinGUI2.setItem(8,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
+    }
     public  static void setGui() {
-        joinGUI.setItem(0,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
-        joinGUI.setItem(1,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
-        joinGUI.setItem(2,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
-        joinGUI.setItem(3,item(Material.WOOL,1,1,ChatColor.WHITE + "Ausaz aukeratu"));
-        joinGUI.setItem(4,item(Material.WOOL,14,1,ChatColor.RED + "Talde Gorria"));
-        joinGUI.setItem(5,item(Material.WOOL,11,1,ChatColor.BLUE + "Talde Urdina"));
-        joinGUI.setItem(6,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
-        joinGUI.setItem(7,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "Aukeratu taldea"));
-        joinGUI.setItem(8,item(Material.PUMPKIN,1,1,ChatColor.BLUE + "Ikuslea"));
+        joinGUI.setItem(0,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "TheTowers"));
+        joinGUI.setItem(1,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "TheTowers"));
+        joinGUI.setItem(2,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "TheTowers"));
+        joinGUI.setItem(3,item(Material.BOW,0,1,ChatColor.BLUE + "Jolastu"));
+        joinGUI.setItem(4,item(Material.BOOK_AND_QUILL,0,1,ChatColor.BLUE + "Estatistikak"));
+       // joinGUI.setItem(4,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "TheTowers"));
+        joinGUI.setItem(5,item(Material.PUMPKIN,1,1,ChatColor.BLUE + "Ikuslea"));
+        joinGUI.setItem(6,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "TheTowers"));
+        joinGUI.setItem(7,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "TheTowers"));
+        joinGUI.setItem(8,item(Material.STAINED_GLASS_PANE,15,1,ChatColor.WHITE + "TheTowers"));
         setGuiVip();
         setGuiEguraldia();
         setGuiOrdua();
+        setGui2();
     }
     public static void openGui(Player p){
         p.openInventory(joinGUI);
@@ -46,7 +60,7 @@ public class Gui implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked(); 
-        if (event.getInventory().getName().equals(joinGUI.getName())) {
+        if (event.getInventory().getName().equals(joinGUI2.getName())) {
             if(event.getCurrentItem().getItemMeta() != null ){
                 ItemStack clicked = event.getCurrentItem(); 
                 event.setCancelled(true);
@@ -72,16 +86,32 @@ public class Gui implements Listener {
                     }else{
                         plugin.join(player,"urdina");
                     }
-                }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.BLUE + "Ikuslea")){
-                    if(plugin.inGame){
-                        player.closeInventory();
-                        plugin.joinSpectator(player);
-                    }else{
-                        player.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Ez da inor jolasten ari");
-                    }
                 }
                  
-        }}else if (event.getInventory().getName().equals(vipGUI.getName())) {
+        }}else if (event.getInventory().getName().equals(joinGUI.getName())) {
+            if(event.getCurrentItem().getItemMeta() != null){
+                ItemStack clicked = event.getCurrentItem(); 
+                event.setCancelled(true);
+                if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.BLUE + "Ikuslea")){
+                        if(plugin.inGame){
+                            player.closeInventory();
+                            plugin.joinSpectator(player);
+                        }else{
+                            player.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Ez da inor jolasten ari");
+                        }
+                }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.BLUE + "Jolastu")){
+                    player.openInventory(joinGUI2);
+                }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.BLUE + "Estatistikak")){
+                    player.sendMessage(ChatColor.GREEN +"==================================================");
+                    player.sendMessage(ChatColor.BLUE +"                    THE TOWERS ESTATISTIKAK");
+                    player.sendMessage(ChatColor.GREEN +"   ");
+                    player.sendMessage(ChatColor.BLUE +"Irabazitako partidak: "+ ChatColor.YELLOW + GEAPI.infoStat("ttirabazi", player));
+                    player.sendMessage(ChatColor.BLUE +"Jokatutako partidak: "+ ChatColor.YELLOW + GEAPI.infoStat("ttjokatu", player));
+                    player.sendMessage(ChatColor.GREEN +"==================================================");    
+                    player.closeInventory();
+                }}
+            
+        }else if (event.getInventory().getName().equals(vipGUI.getName())) {
                 ItemStack clicked = event.getCurrentItem(); 
                 event.setCancelled(true);
                 if(!player.hasPermission("tt.vip")){

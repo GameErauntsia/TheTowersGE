@@ -60,6 +60,7 @@ public class TheTowersGE extends JavaPlugin{
         getServer().getPluginManager().registerEvents(new SignListener(this),this);
         defaultValues();
         hookPlayerPoints();
+        setupGEAPI();
     }
     
     @Override
@@ -67,7 +68,7 @@ public class TheTowersGE extends JavaPlugin{
         Player p = (Player) sender;
         if (cmd.getName().equalsIgnoreCase("thetowers")){
             if(args.length < 1){
-                
+                GEAPI.gehituStat("ttirabazi", 1, p);
             }else if (args[0].equalsIgnoreCase("join")){
                 if(getJokalaria(p) != null){
                     p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Dagoeneko bazaude sartuta");
@@ -278,16 +279,19 @@ public class TheTowersGE extends JavaPlugin{
         Broadcast(ChatColor.GREEN + "            Irabazlea: talde " + irabazlea.getID());
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
         for(Jokalaria j : irabazlea.getPlayers()){
-            j.getPlayer().teleport(lobby);
             getPlayerPoints().getAPI().give(j.getPlayer().getUniqueId(), 70);
-            j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! 70 puntu irabazi dituzu");
+            GEAPI.gehituStat("ttirabazi",1,j.getPlayer());
+            GEAPI.gehituStat("ttjokatu",1,j.getPlayer());
+            j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! irabazteagatik 70 puntu irabazi dituzu");
+            j.getPlayer().teleport(lobby);
             j.getPlayer().getInventory().clear();
             j.getPlayer().getInventory().setArmorContents(null);
         }
         for(Jokalaria j : galtzailea.getPlayers()){
-            j.getPlayer().teleport(lobby);
             getPlayerPoints().getAPI().give(j.getPlayer().getUniqueId(), 20);
-            j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! 20 puntu irabazi dituzu");
+            GEAPI.gehituStat("ttjokatu",1,j.getPlayer());
+            j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! jolasteagatik 20 puntu irabazi dituzu");
+            j.getPlayer().teleport(lobby);
             j.getPlayer().getInventory().clear();
             j.getPlayer().getInventory().setArmorContents(null);
         }
@@ -450,4 +454,13 @@ public class TheTowersGE extends JavaPlugin{
     public PlayerPoints getPlayerPoints() {
         return playerPoints;
     }
+    private boolean setupGEAPI(){
+        //final Plugin plugin = this.getServer().getPluginManager().getPlugin("GameErauntsiaMC");
+        GameErauntsiaMC api = (GameErauntsiaMC) getServer().getPluginManager().getPlugin("GameErauntsiaMC");
+        GEAPI = api.getAPI();
+        GEAPI.kargatuStat("ttirabazi");
+        GEAPI.kargatuStat("ttjokatu");
+        return GEAPI != null; 
+    }
+    private GEAPI GEAPI;
 }
