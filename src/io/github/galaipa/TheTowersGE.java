@@ -455,7 +455,6 @@ public class TheTowersGE extends JavaPlugin{
         return playerPoints;
     }
     private boolean setupGEAPI(){
-        //final Plugin plugin = this.getServer().getPluginManager().getPlugin("GameErauntsiaMC");
         GameErauntsiaMC api = (GameErauntsiaMC) getServer().getPluginManager().getPlugin("GameErauntsiaMC");
         GEAPI = api.getAPI();
         GEAPI.kargatuStat("ttirabazi");

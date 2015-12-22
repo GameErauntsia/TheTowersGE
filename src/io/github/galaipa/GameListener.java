@@ -36,7 +36,7 @@ public class GameListener implements Listener{
             plugin = instance;
         }
       @EventHandler
-      public void onDeath(PlayerDeathEvent e){
+      public void onDeathTT(PlayerDeathEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getEntity())){
                 Player killed = e.getEntity();
@@ -48,7 +48,7 @@ public class GameListener implements Listener{
         } 
           } 
     @EventHandler
-        public void noTeamKill(EntityDamageByEntityEvent event){
+        public void noTeamKillTT(EntityDamageByEntityEvent event){
         if((event.getEntity() instanceof Player) && (event.getDamager() instanceof Player)){
         if(plugin.inGame){
             if(plugin.isInGame((Player) event.getEntity())){
@@ -71,7 +71,7 @@ public class GameListener implements Listener{
         }
           }
       @EventHandler(priority = EventPriority.HIGHEST) 
-      public void onRespawn(PlayerRespawnEvent e){
+      public void onRespawnTT(PlayerRespawnEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
                 Jokalaria j = plugin.getJokalaria(e.getPlayer());
@@ -83,7 +83,7 @@ public class GameListener implements Listener{
         }
       }
       @EventHandler
-      public void onLeave(PlayerQuitEvent e){
+      public void onLeaveTT(PlayerQuitEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
                 map.put(e.getPlayer().getName(), plugin.getJokalaria(e.getPlayer()).getTeam());
@@ -94,7 +94,7 @@ public class GameListener implements Listener{
         }
       }
       @EventHandler
-      public void onJoin(PlayerJoinEvent e){
+      public void onJoinTT(PlayerJoinEvent e){
         if(plugin.inGame){
             if(map.get(e.getPlayer().getName()) != null){       
                 Jokalaria j = new Jokalaria(e.getPlayer());
@@ -115,7 +115,7 @@ public class GameListener implements Listener{
       }
       
       @EventHandler
-      public void onPickUp(PlayerPickupItemEvent e){
+      public void onPickUpTT(PlayerPickupItemEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
                 ItemStack i = e.getItem().getItemStack();
@@ -127,7 +127,7 @@ public class GameListener implements Listener{
         }
       }
       @EventHandler
-     public void onMove(PlayerMoveEvent e) {
+     public void onMoveTT(PlayerMoveEvent e) {
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
                     if(plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getPlayer().getLocation())){
@@ -154,7 +154,7 @@ public class GameListener implements Listener{
         }
       }
      @EventHandler
-     public void onAdminMenu(BlockPlaceEvent e){
+     public void onAdminMenuTT(BlockPlaceEvent e){
          if(plugin.admin){
              Player p = e.getPlayer();
              if(p.getItemInHand().getType() == Material.STAINED_CLAY){
@@ -216,12 +216,16 @@ public class GameListener implements Listener{
                         }
                       else if(event.getMessage().toLowerCase().startsWith("/t")){
                         }
+                      else if(event.getMessage().toLowerCase().startsWith("/login")){
+                        }
+                      else if(event.getMessage().toLowerCase().startsWith("/laguntza")){
+                        }
                       else if(p.hasPermission("tt.admin")){
                           
                       }
                       else{
                        event.setCancelled(true);
-                       p.sendMessage(ChatColor.GREEN +"[TheTowers]" + ChatColor.RED + "You can't use command during the game");
+                       p.sendMessage(ChatColor.GREEN +"[TheTowers]" + ChatColor.RED + "Ezin duzu komandorik erabili jolasten zaudenean");
                       }
 
               }
