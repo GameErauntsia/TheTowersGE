@@ -30,7 +30,7 @@ public class GameListener implements Listener{
         private Location l1_red;
         private Location l2_red;
         static String arena2;
-        HashMap<String, Team> map = new HashMap<>();
+        public static HashMap<String, Team> map = new HashMap<>();
         public TheTowersGE plugin;
         public GameListener(TheTowersGE instance) {
             plugin = instance;
@@ -87,9 +87,7 @@ public class GameListener implements Listener{
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
                 map.put(e.getPlayer().getName(), plugin.getJokalaria(e.getPlayer()).getTeam());
-                Jokalaria j = plugin.getJokalaria(e.getPlayer());
-                plugin.jokalariak.remove(j);
-                j.getTeam().removePlayer(j);
+                plugin.leave(e.getPlayer());
             }
         }
       }
@@ -106,11 +104,17 @@ public class GameListener implements Listener{
                 p.setScoreboard(plugin.board);
                 plugin.setArmour(j);
                 plugin.giveItems(j);
-            }else{
-                e.getPlayer().getInventory().clear();
-                e.getPlayer().getInventory().setArmorContents(null);
-                e.getPlayer().teleport(plugin.mainLobby);
+            }else if (e.getPlayer().getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
+                Player p = e.getPlayer();
+                p.teleport(plugin.mainLobby);
+                p.getPlayer().getInventory().clear();
+                p.getPlayer().getInventory().setArmorContents(null);
             }
+        }else if(e.getPlayer().getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
+                Player p = e.getPlayer();
+                p.teleport(plugin.mainLobby);
+                p.getPlayer().getInventory().clear();
+                p.getPlayer().getInventory().setArmorContents(null);
         }
       }
       
@@ -153,6 +157,25 @@ public class GameListener implements Listener{
             }
         }
       }
+    /*  @EventHandler
+     public void onPDetectTT(PlayerMoveEvent e) {
+         if(e.getPlayer().getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
+             Player p = e.getPlayer();
+             if(!p.isOp()){
+                 if(plugin.inGame){
+                     if(!plugin.isInGame(e.getPlayer())){
+                        p.teleport(plugin.mainLobby);
+                        p.getPlayer().getInventory().clear();
+                        p.getPlayer().getInventory().setArmorContents(null);
+                     }
+                 }else{
+                        p.teleport(plugin.mainLobby);
+                        p.getPlayer().getInventory().clear();
+                        p.getPlayer().getInventory().setArmorContents(null);
+                 }
+             }
+         }
+     }*/
      @EventHandler
      public void onAdminMenuTT(BlockPlaceEvent e){
          if(plugin.admin){

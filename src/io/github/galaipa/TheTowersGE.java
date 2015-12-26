@@ -62,6 +62,15 @@ public class TheTowersGE extends JavaPlugin{
         hookPlayerPoints();
         setupGEAPI();
     }
+    @Override
+    public void onDisable(){
+        if(inGame){
+            System.out.print(jokalariak.toString());
+            for(Jokalaria j : jokalariak){
+                leave(j.getPlayer());
+            }
+        }
+    }
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
@@ -114,15 +123,16 @@ public class TheTowersGE extends JavaPlugin{
         return false;
     }
     public void defaultValues(){
+        inGame = false;
         urdina = new Team("urdina");
         gorria = new Team("gorria");
-        inGame = false;
         admin = false;
         jokalariak.clear();    
         ikusleak.clear();
         Gui.setGui();
         bozkak = 0;
         bozketa = false;
+        GameListener.map.clear();
 }
     public void join(Player p, String s){
         loadLobby();
@@ -183,10 +193,14 @@ public class TheTowersGE extends JavaPlugin{
        Jokalaria j = getJokalaria(p);
        jokalariak.remove(j);
        j.getTeam().removePlayer(j);
-       p.teleport(mainLobby);
-       p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
-       p.getInventory().clear();
-       p.getInventory().setArmorContents(null);
+       if(p.isOnline()){
+           p.getInventory().clear();
+           p.getInventory().setArmorContents(null);
+           p.teleport(mainLobby);
+           p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
+           p.getInventory().clear();
+           p.getInventory().setArmorContents(null);
+       }
        if(jokalariak.isEmpty()){
            reset();
        }
@@ -274,26 +288,29 @@ public class TheTowersGE extends JavaPlugin{
         }
         }
     public void amaiera(Team irabazlea, Team galtzailea){
+        inGame = false;
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
         Broadcast(ChatColor.GREEN + "            TheTowers partida amaitu da         ");
         Broadcast(ChatColor.GREEN + "            Irabazlea: talde " + irabazlea.getID());
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
         for(Jokalaria j : irabazlea.getPlayers()){
-            getPlayerPoints().getAPI().give(j.getPlayer().getUniqueId(), 70);
-            GEAPI.gehituStat("ttirabazi",1,j.getPlayer());
-            GEAPI.gehituStat("ttjokatu",1,j.getPlayer());
-            j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! irabazteagatik 70 puntu irabazi dituzu");
-            j.getPlayer().teleport(lobby);
-            j.getPlayer().getInventory().clear();
-            j.getPlayer().getInventory().setArmorContents(null);
+            Player p = j.getPlayer();
+            getPlayerPoints().getAPI().give(p.getUniqueId(), 70);
+            GEAPI.gehituStat("ttirabazi",1,p);
+            GEAPI.gehituStat("ttjokatu",1,p);
+            p.sendMessage(ChatColor.GREEN + "Zorionak! irabazteagatik 70 puntu irabazi dituzu");
+            p.teleport(mainLobby);
+            p.getInventory().clear();
+            p.getInventory().setArmorContents(null);
         }
         for(Jokalaria j : galtzailea.getPlayers()){
-            getPlayerPoints().getAPI().give(j.getPlayer().getUniqueId(), 20);
-            GEAPI.gehituStat("ttjokatu",1,j.getPlayer());
-            j.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! jolasteagatik 20 puntu irabazi dituzu");
-            j.getPlayer().teleport(lobby);
-            j.getPlayer().getInventory().clear();
-            j.getPlayer().getInventory().setArmorContents(null);
+            Player p = j.getPlayer();
+            getPlayerPoints().getAPI().give(p.getUniqueId(), 20);
+            GEAPI.gehituStat("ttjokatu",1,p);
+            p.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! jolasteagatik 20 puntu irabazi dituzu");
+            p.getPlayer().teleport(mainLobby);
+            p.getPlayer().getInventory().clear();
+            p.getPlayer().getInventory().setArmorContents(null);
         }
         reset();
     }
@@ -304,8 +321,8 @@ public class TheTowersGE extends JavaPlugin{
                 p.setGameMode(GameMode.SURVIVAL);
             }
         }
-        defaultValues();
-        Bukkit.getScheduler().cancelTask(spawners); 
+        Bukkit.getScheduler().cancelTask(spawners);
+        defaultValues(); 
         WorldReset.resetWorld("TheTowersMapa");
     }
         
