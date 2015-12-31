@@ -3,7 +3,7 @@ main: io.github.galaipa.TheTowersGE
 version: 2.0
 author: Galaipa 
 description: TheTowers minijoko  plugina
-softdepend: [Vault,PlayerPoints,GameErauntsiaMC]
+softdepend: [Vault,PlayerPoints,GameErauntsiaMC,Multiverse-Core]
 commands:
   thetowers:
     description: TT komando nagusia

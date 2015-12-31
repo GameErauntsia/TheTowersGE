@@ -250,16 +250,17 @@ public class Gui implements Listener {
               Player p = event.getPlayer();
               if(plugin.isInGame(p)){
               if(p.getItemInHand() != null && p.getItemInHand().hasItemMeta() && p.getItemInHand().getItemMeta().hasDisplayName()){
-                   if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.YELLOW  +"Jokoa hasteko bozkatu")){
+                  String izena = p.getItemInHand().getItemMeta().getDisplayName();
+                   if(izena.equalsIgnoreCase(ChatColor.YELLOW  +"Jokoa hasteko bozkatu")){
                       event.setCancelled(true);
                       p.getInventory().setItem(3,item(Material.STAINED_CLAY,5,1,ChatColor.GREEN + "Jokoa hasteko bozkatu duzu"));
                       bozkatu(p);
-                  }else if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED  +"Jokotik irten")){
+                  }else if(izena.equalsIgnoreCase(ChatColor.RED  +"Jokotik irten")){
                       event.setCancelled(true);
                       plugin.leave(p);
-                  }else if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN  +"Game Erauntsia TheTowers")){
+                  }else if(izena.equalsIgnoreCase(ChatColor.GREEN  +"Game Erauntsia TheTowers")){
                       event.setCancelled(true);
-                  }else if(p.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Jokoa hasteko bozkatu duzu")){
+                  }else if(izena.equalsIgnoreCase(ChatColor.GREEN + "Jokoa hasteko bozkatu duzu")){
                       event.setCancelled(true);
                   }
           }
