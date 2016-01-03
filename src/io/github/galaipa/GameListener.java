@@ -49,27 +49,25 @@ public class GameListener implements Listener{
           } 
     @EventHandler
         public void noTeamKillTT(EntityDamageByEntityEvent event){
-        if((event.getEntity() instanceof Player) && (event.getDamager() instanceof Player)){
-        if(plugin.inGame){
-            if(plugin.isInGame((Player) event.getEntity())){
-                Jokalaria j1 = plugin.getJokalaria((Player) event.getEntity());
-                Jokalaria j2 = plugin.getJokalaria((Player) event.getDamager());
-                if(j1.getTeam().equals(j2.getTeam())){
-                    event.setCancelled(true);
+            if(event.getEntity() instanceof Player){
+                Player damaged = (Player) event.getEntity();
+                if(plugin.inGame && plugin.isInGame(damaged)){
+                    if (event.getDamager() instanceof Arrow){
+                        Jokalaria j1 = plugin.getJokalaria(damaged);
+                        Jokalaria j2 = plugin.getJokalaria((Player)(((Arrow)event.getDamager()).getShooter()));
+                        if(j1.getTeam().equals(j2.getTeam())){
+                            event.setCancelled(true);
+                        }
+                    }else if(event.getDamager() instanceof Player){
+                        Jokalaria j1 = plugin.getJokalaria(damaged);
+                        Jokalaria j2 = plugin.getJokalaria((Player) event.getDamager());
+                        if(j1.getTeam().equals(j2.getTeam())){
+                            event.setCancelled(true);
+                        }
+                    }
                 }
-            }
-        } }else if (event.getDamager() instanceof Arrow) {
-        if(plugin.inGame){
-            if(plugin.isInGame((Player) event.getEntity())){
-                Jokalaria j1 = plugin.getJokalaria((Player) event.getEntity());
-                Jokalaria j2 = plugin.getJokalaria((Player)(((Arrow)event.getDamager()).getShooter()));
-                if(j1.getTeam().equals(j2.getTeam())){
-                    event.setCancelled(true);
-                }
-            }
-            }
+            } 
         }
-          }
       @EventHandler(priority = EventPriority.HIGHEST) 
       public void onRespawnTT(PlayerRespawnEvent e){
         if(plugin.inGame){
