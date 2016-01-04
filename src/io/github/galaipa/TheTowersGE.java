@@ -143,6 +143,16 @@ public class TheTowersGE extends JavaPlugin{
             if(urdina.getPlayers().size() <= gorria.getPlayers().size()){
                 j.setTeam(urdina);
                 p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
+                if(inGame){
+                    p.getInventory().setArmorContents(null);
+                    p.getInventory().clear();
+                    p.teleport(j.getTeam().getSpawn());
+                    p.getInventory().setArmorContents(null);
+                    p.getInventory().clear();
+                    p.setHealth(p.getMaxHealth());
+                    setArmour(j); 
+                    giveItems(j);
+                }
             }else{
                 j.setTeam(gorria);
                 p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
@@ -252,7 +262,7 @@ public class TheTowersGE extends JavaPlugin{
                     Broadcast(ChatColor.GREEN + "-----------------------------------------------");
                     Broadcast(ChatColor.BOLD.toString());
                     Broadcast(ChatColor.WHITE + "                         §lThe Towers");
-                    Broadcast(ChatColor.GREEN + "                   " + "Zorte on denei!") ;
+                    Broadcast(ChatColor.GREEN + "                   " + "Zorte on guztiei!") ;
                     Broadcast(ChatColor.GREEN + "                " + "Partida 10 puntutara da");
                     Broadcast(ChatColor.BOLD.toString());
                     Broadcast(ChatColor.GREEN + "-----------------------------------------------");
@@ -296,21 +306,21 @@ public class TheTowersGE extends JavaPlugin{
         for(Jokalaria j : irabazlea.getPlayers()){
             Player p = j.getPlayer();
             getPlayerPoints().getAPI().give(p.getUniqueId(), 70);
-            GEAPI.gehituStat("ttirabazi",1,p);
-            GEAPI.gehituStat("ttjokatu",1,p);
             p.sendMessage(ChatColor.GREEN + "Zorionak! irabazteagatik 70 puntu irabazi dituzu");
             p.teleport(mainLobby);
             p.getInventory().clear();
             p.getInventory().setArmorContents(null);
+            GEAPI.gehituStat("ttirabazi",1,p);
+            GEAPI.gehituStat("ttjokatu",1,p);
         }
         for(Jokalaria j : galtzailea.getPlayers()){
             Player p = j.getPlayer();
             getPlayerPoints().getAPI().give(p.getUniqueId(), 20);
-            GEAPI.gehituStat("ttjokatu",1,p);
             p.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! jolasteagatik 20 puntu irabazi dituzu");
             p.getPlayer().teleport(mainLobby);
             p.getPlayer().getInventory().clear();
             p.getPlayer().getInventory().setArmorContents(null);
+            GEAPI.gehituStat("ttjokatu",1,p);
         }
         reset();
     }

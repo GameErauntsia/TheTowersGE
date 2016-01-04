@@ -136,14 +136,14 @@ public class GameListener implements Listener{
                         e.getPlayer().teleport(plugin.getJokalaria(e.getPlayer()).getTeam().getSpawn());
                         if(plugin.getJokalaria(e.getPlayer()).getTeam().getID().equalsIgnoreCase("urdina")){
                            plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
-                           plugin.Broadcast(ChatColor.BLUE + "Talde urdinak tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
+                           plugin.Broadcast(ChatColor.BLUE +  e.getPlayer().getName() + "-(e)k tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
                            if(plugin.scoreUrdina.getScore() == 10){
                                plugin.amaiera(plugin.urdina,plugin.gorria);
                            }
                         }
                         else{
                             plugin.scoreGorria.setScore((plugin.scoreGorria.getScore()+1));
-                            plugin.Broadcast(ChatColor.RED + "Talde gorriak tantoa egin du (" + plugin.scoreGorria.getScore() + ")");
+                            plugin.Broadcast(ChatColor.RED + e.getPlayer().getName() + "-(e)k tantoa egin du (" + plugin.scoreGorria.getScore() + ")");
                              if(plugin.scoreGorria.getScore() == 10){
                                        plugin.amaiera(plugin.gorria,plugin.urdina);
                                    }
@@ -230,7 +230,7 @@ public class GameListener implements Listener{
      
       @EventHandler
       public void PlayerCommand(PlayerCommandPreprocessEvent event) {
-          if(plugin.inGame == true){
+          if(plugin.inGame){
               Player p = event.getPlayer();
               if(plugin.isInGame(event.getPlayer())){
                       if(event.getMessage().toLowerCase().startsWith("/thetowers")){
