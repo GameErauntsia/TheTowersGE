@@ -69,7 +69,7 @@ public class Gui implements Listener {
                     return;
                 }*/
                 if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.WHITE + "Ausaz aukeratu")){
-                    plugin.join(player,"ausaz");
+                    plugin.joinRandom(player);
                 }
                 else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.RED + "Talde Gorria")){
                     if(!player.hasPermission("tt.vip")){

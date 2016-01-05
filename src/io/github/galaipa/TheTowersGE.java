@@ -43,7 +43,7 @@ public class TheTowersGE extends JavaPlugin{
     Score scoreGorria;
     String taldea = "urdina";
     Location lobby;
-    Location mainLobby = new Location(getServer().getWorld("Jokoak"),1639,4,94);
+    Location mainLobby;
     Location exp;
     Location iron;
     int spawners;
@@ -134,97 +134,69 @@ public class TheTowersGE extends JavaPlugin{
         bozketa = false;
         GameListener.map.clear();
 }
-    public void join(Player p, String s){
-        loadLobby();
-        p.teleport(lobby);
+public void join(Player p, String s){
+        if(jokalariak.isEmpty()){
+            loadLobby();
+        }
         Jokalaria j = new Jokalaria(p);
         jokalariak.add(j);
-        if(s.equalsIgnoreCase("ausaz")){
-            if(urdina.getPlayers().size() <= gorria.getPlayers().size()){
+        switch(s){
+            case "gorria":
+                j.setTeam(gorria);
+                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
+                System.out.println(p.getName() + " talde gorrian sartu da");
+            case "urdina":
                 j.setTeam(urdina);
                 p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
-                if(inGame){
-                    p.getInventory().setArmorContents(null);
-                    p.getInventory().clear();
-                    p.teleport(j.getTeam().getSpawn());
-                    p.getInventory().setArmorContents(null);
-                    p.getInventory().clear();
-                    p.setHealth(p.getMaxHealth());
-                    setArmour(j); 
-                    giveItems(j);
-                }
-            }else{
-                j.setTeam(gorria);
-                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
+                System.out.println(p.getName() + " talde gorrian sartu da");
         }
-        }else if (s.equalsIgnoreCase("gorria")){
-                j.setTeam(gorria);
-                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
+        if(!inGame){
+            Gui.maingui(j);
+            setArmour(j);
+            p.teleport(lobby);
         }else{
-                j.setTeam(urdina);
-                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
+            teleportSpawn(j);
         }
-        setArmour(j);
-        Gui.maingui(j);
         
-    }public void joinSpectator(Player p){
+    }public void joinRandom(Player p){
+         if(urdina.getPlayers().size() <= gorria.getPlayers().size()){
+             join(p,"urdina");
+         }else{
+             join(p,"gorria");
+         }
+    }
+    public void joinSpectator(Player p){
         ikusleak.add(p);
         p.teleport(exp);
-        p.setGameMode(GameMode.SPECTATOR);
         p.setScoreboard(board);
-        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Ikusle bezala sartu zara");
+        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Ikuslegoan sartu zara");
+        p.setGameMode(GameMode.SPECTATOR);
     }public void leaveSpectator(Player p){
         ikusleak.remove(p);
         p.teleport(mainLobby);
-      //  p.setGameMode(GameMode.SURVIVAL);
         p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
+        p.setGameMode(GameMode.SURVIVAL);
     }
-    /*public void join(Player p){
-        loadLobby();
-        if(getJokalaria(p) != null){
-            p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Dagoeneko bazaude zerrendan");
-        }else{
-        Jokalaria j = new Jokalaria(p);
-        jokalariak.add(j);
-        if(taldea.equalsIgnoreCase("urdina")){
-            j.setTeam(urdina);
-            p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
-            taldea = "gorria";
-        }
-        else{
-            j.setTeam(gorria);
-            p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
-            taldea = "urdina";
-        }
-        j.getPlayer().teleport(lobby);
-        }
-    }*/
     public void leave(Player p){
        Jokalaria j = getJokalaria(p);
-       jokalariak.remove(j);
-       j.getTeam().removePlayer(j);
        if(p.isOnline()){
-           p.getInventory().clear();
-           p.getInventory().setArmorContents(null);
            p.teleport(mainLobby);
            p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
-           p.getInventory().clear();
-           p.getInventory().setArmorContents(null);
+           j.returnInv();
+           p.updateInventory();
        }
+       jokalariak.remove(j);
+       j.getTeam().removePlayer(j);
        if(jokalariak.isEmpty()){
            reset();
        }
     }
-    public void teleportSpawn(){
-        for(Jokalaria j : jokalariak){
+    public void teleportSpawn(Jokalaria j){
             Player p = j.getPlayer();
-            p.getInventory().setArmorContents(null);
-            p.getInventory().clear();
             p.teleport(j.getTeam().getSpawn());
             p.setHealth(p.getMaxHealth());
             setArmour(j); 
             giveItems(j);
-        }
     }
              public void start(){
                  String arena = "a";
@@ -249,26 +221,28 @@ public class TheTowersGE extends JavaPlugin{
                     int countdown = 10;
                     @Override
                     public void run(){
-                    for(Jokalaria j : jokalariak){
-                        Player p = j.getPlayer();
-                        p.setLevel(countdown);
-                       // p.sendMessage(ChatColor.GREEN + " " + countdown);
-                        p.getWorld().playSound(p.getLocation(),Sound.NOTE_STICKS, 10, 1);
-                        sendTitle(p,20,40,20,ChatColor.YELLOW + Integer.toString(countdown),"");
-                    }
-                    countdown--;
+                        for(Jokalaria j : jokalariak){
+                            Player p = j.getPlayer();
+                            p.setLevel(countdown);
+                           // p.sendMessage(ChatColor.GREEN + " " + countdown);
+                            p.getWorld().playSound(p.getLocation(),Sound.NOTE_STICKS, 10, 1);
+                            sendTitle(p,20,40,20,ChatColor.YELLOW + Integer.toString(countdown),"");
+                        }
+                        countdown--;
                     if (countdown < 0) {
-                    this.cancel();
-                    Broadcast(ChatColor.GREEN + "-----------------------------------------------");
-                    Broadcast(ChatColor.BOLD.toString());
-                    Broadcast(ChatColor.WHITE + "                         §lThe Towers");
-                    Broadcast(ChatColor.GREEN + "                   " + "Zorte on guztiei!") ;
-                    Broadcast(ChatColor.GREEN + "                " + "Partida 10 puntutara da");
-                    Broadcast(ChatColor.BOLD.toString());
-                    Broadcast(ChatColor.GREEN + "-----------------------------------------------");
-                    teleportSpawn();
-                    setScoreBoard();
-                    Spawners();
+                        this.cancel();
+                        Broadcast(ChatColor.GREEN + "-----------------------------------------------");
+                        Broadcast(ChatColor.BOLD.toString());
+                        Broadcast(ChatColor.WHITE + "                         §lThe Towers");
+                        Broadcast(ChatColor.GREEN + "                   " + "Zorte on guztiei!") ;
+                        Broadcast(ChatColor.GREEN + "                " + "Partida 10 puntutara da");
+                        Broadcast(ChatColor.BOLD.toString());
+                        Broadcast(ChatColor.GREEN + "-----------------------------------------------");
+                        for(Jokalaria j : jokalariak){
+                            teleportSpawn(j);
+                        }
+                        setScoreBoard();
+                        Spawners();
                     }
                     }
                     };task.runTaskTimer(this, 0L, 20L);
@@ -277,6 +251,7 @@ public class TheTowersGE extends JavaPlugin{
     public void Spawners(){
         spawners = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
             World w = urdina.getSpawn().getWorld();
+            @Override
             public void run(){  
                 w.dropItemNaturally(exp, new ItemStack(Material.EXP_BOTTLE));
                 w.dropItemNaturally(iron, new ItemStack(Material.IRON_INGOT));
@@ -294,7 +269,7 @@ public class TheTowersGE extends JavaPlugin{
         scoreGorria.setScore(0);
         scoreUrdina.setScore(0);
         for(Jokalaria j : jokalariak){
-                j.getPlayer().setScoreboard(board);
+            j.getPlayer().setScoreboard(board);
         }
         }
     public void amaiera(Team irabazlea, Team galtzailea){
@@ -308,8 +283,7 @@ public class TheTowersGE extends JavaPlugin{
             getPlayerPoints().getAPI().give(p.getUniqueId(), 70);
             p.sendMessage(ChatColor.GREEN + "Zorionak! irabazteagatik 70 puntu irabazi dituzu");
             p.teleport(mainLobby);
-            p.getInventory().clear();
-            p.getInventory().setArmorContents(null);
+            j.returnInv();
             GEAPI.gehituStat("ttirabazi",1,p);
             GEAPI.gehituStat("ttjokatu",1,p);
         }
@@ -318,8 +292,7 @@ public class TheTowersGE extends JavaPlugin{
             getPlayerPoints().getAPI().give(p.getUniqueId(), 20);
             p.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! jolasteagatik 20 puntu irabazi dituzu");
             p.getPlayer().teleport(mainLobby);
-            p.getPlayer().getInventory().clear();
-            p.getPlayer().getInventory().setArmorContents(null);
+            j.returnInv();
             GEAPI.gehituStat("ttjokatu",1,p);
         }
         reset();
@@ -338,16 +311,16 @@ public class TheTowersGE extends JavaPlugin{
         
     
     public void setArmour(Jokalaria j){
-            Player p = j.getPlayer();
-            p.getInventory().setArmorContents(null); //Inbentarioa garbitu
-            p.getInventory().clear();
-            p.getInventory().setHelmet(getColorArmor(Material.LEATHER_HELMET,j.getTeam().getColor())); // Koloretako armadura jarri
-            p.getInventory().setChestplate(getColorArmor(Material.LEATHER_CHESTPLATE,j.getTeam().getColor()));
-            p.getInventory().setLeggings(getColorArmor(Material.LEATHER_LEGGINGS,j.getTeam().getColor()));
-            p.getInventory().setBoots(getColorArmor(Material.LEATHER_BOOTS,j.getTeam().getColor()));
+        Player p = j.getPlayer();
+        p.getInventory().setArmorContents(null); 
+        p.getInventory().setHelmet(getColorArmor(Material.LEATHER_HELMET,j.getTeam().getColor())); // Koloretako armadura jarri
+        p.getInventory().setChestplate(getColorArmor(Material.LEATHER_CHESTPLATE,j.getTeam().getColor()));
+        p.getInventory().setLeggings(getColorArmor(Material.LEATHER_LEGGINGS,j.getTeam().getColor()));
+        p.getInventory().setBoots(getColorArmor(Material.LEATHER_BOOTS,j.getTeam().getColor()));
     }
     public void giveItems(Jokalaria j){
         Player p = j.getPlayer();
+        p.getInventory().clear();
         p.getInventory().addItem(new ItemStack(Material.BAKED_POTATO,10));
         if(j.getTeam()== urdina){
             p.getInventory().addItem(item(Material.STAINED_GLASS,11,32,ChatColor.BLUE + "Talde Urdina"));
@@ -417,47 +390,48 @@ public class TheTowersGE extends JavaPlugin{
         return null;
     }
    public void saveSelection(String arena,String id, Location l1, Location l2){
-                getConfig().set(arena + ".Win." + id + ".World", l1.getWorld().getName());
-                getConfig().set(arena + ".Win." + id + ".Min.x", l1.getX());
-                getConfig().set(arena + ".Win." + id + ".Min.y", l1.getY());
-                getConfig().set(arena + ".Win." + id + ".Min.z", l1.getZ());
-                
-                getConfig().set(arena + ".Win." + id + ".Max.x", l2.getX());
-                getConfig().set(arena + ".Win." + id + ".Max.y", l2.getY());
-                getConfig().set(arena + ".Win." + id + ".Max.z", l2.getZ());
-                saveConfig();
+        getConfig().set(arena + ".Win." + id + ".World", l1.getWorld().getName());
+        getConfig().set(arena + ".Win." + id + ".Min.x", l1.getX());
+        getConfig().set(arena + ".Win." + id + ".Min.y", l1.getY());
+        getConfig().set(arena + ".Win." + id + ".Min.z", l1.getZ());
+
+        getConfig().set(arena + ".Win." + id + ".Max.x", l2.getX());
+        getConfig().set(arena + ".Win." + id + ".Max.y", l2.getY());
+        getConfig().set(arena + ".Win." + id + ".Max.z", l2.getZ());
+        saveConfig();
     }
     public void loadSelection(Team s, String arena){
-                String w22 = getConfig().getString(arena + ".Spawn." + s.getID() +".World");
-                Double x22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".X");
-                Double y22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".Y");
-                Double z22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".Z");
-                s.setSpawn(new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22));
-                
-                String w = getConfig().getString(arena + ".Win." + s.getID() + ".World");
-                Double x = getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.x");
-                Double y= getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.y");
-                Double z = getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.z");
-                Double x2 = getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.x");
-                Double y2= getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.y");
-                Double z2 = getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.z");
-                Location l1 = new Location(Bukkit.getServer().getWorld(w), x, y, z);
-                Location l2 = new Location(Bukkit.getServer().getWorld(w), x2, y2, z2);
+        String w22 = getConfig().getString(arena + ".Spawn." + s.getID() +".World");
+        Double x22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".X");
+        Double y22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".Y");
+        Double z22 = getConfig().getDouble(arena + ".Spawn." + s.getID() +".Z");
+        s.setSpawn(new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22));
+
+        String w = getConfig().getString(arena + ".Win." + s.getID() + ".World");
+        Double x = getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.x");
+        Double y= getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.y");
+        Double z = getConfig().getDouble(arena + ".Win." + s.getID() + ".Min.z");
+        Double x2 = getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.x");
+        Double y2= getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.y");
+        Double z2 = getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.z");
+        Location l1 = new Location(Bukkit.getServer().getWorld(w), x, y, z);
+        Location l2 = new Location(Bukkit.getServer().getWorld(w), x2, y2, z2);
                 s.setWin(l1, l2);
     }
    public void SaveSpawn(String arena, Location l,String t){;
-                getConfig().set(arena + ".Spawn."+ t +".World", l.getWorld().getName());
-                getConfig().set(arena + ".Spawn."+ t +".X", l.getX());
-                getConfig().set(arena + ".Spawn."+ t +".Y", l.getY());
-                getConfig().set(arena + ".Spawn."+ t +".Z", l.getZ());
-                saveConfig();
+        getConfig().set(arena + ".Spawn."+ t +".World", l.getWorld().getName());
+        getConfig().set(arena + ".Spawn."+ t +".X", l.getX());
+        getConfig().set(arena + ".Spawn."+ t +".Y", l.getY());
+        getConfig().set(arena + ".Spawn."+ t +".Z", l.getZ());
+        saveConfig();
    }
    public void loadLobby(){
-                String w22 = getConfig().getString("Lobby.World");
-                Double x22 = getConfig().getDouble("Lobby.X");
-                Double y22 = getConfig().getDouble("Lobby.Y");
-                Double z22 = getConfig().getDouble("Lobby.Z");
-                lobby =new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22);
+        String w22 = getConfig().getString("Lobby.World");
+        Double x22 = getConfig().getDouble("Lobby.X");
+        Double y22 = getConfig().getDouble("Lobby.Y");
+        Double z22 = getConfig().getDouble("Lobby.Z");
+        lobby =new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22);
+        mainLobby = new Location(getServer().getWorld("Jokoak"),1639,4,94);
    }
    public void loadSpawners(String arena){
         String w= getConfig().getString(arena + ".Spawn.exp.World");

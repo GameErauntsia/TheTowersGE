@@ -14,11 +14,11 @@ public class Team {
     public Team(String n) {
         players = new ArrayList();
 	id = n;
-        if(n.equalsIgnoreCase("urdina")){
-            color = Color.BLUE;
-        }
-        else{
-            color = Color.RED;
+        switch(n){
+            case "urdina":
+                color = Color.BLUE;
+            case "gorria":
+                color = Color.RED;      
         }
 	}
 
