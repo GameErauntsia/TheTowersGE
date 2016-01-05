@@ -140,15 +140,12 @@ public void join(Player p, String s){
         }
         Jokalaria j = new Jokalaria(p);
         jokalariak.add(j);
-        switch(s){
-            case "gorria":
-                j.setTeam(gorria);
-                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
-                System.out.println(p.getName() + " talde gorrian sartu da");
-            case "urdina":
-                j.setTeam(urdina);
-                p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
-                System.out.println(p.getName() + " talde gorrian sartu da");
+        if(s.equalsIgnoreCase("gorria")){
+            j.setTeam(gorria);
+            p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
+        }else{
+            j.setTeam(urdina);
+            p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
         }
         if(!inGame){
             Gui.maingui(j);
