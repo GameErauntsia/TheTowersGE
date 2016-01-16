@@ -83,36 +83,38 @@ public class GameListener implements Listener{
       @EventHandler
       public void onLeaveTT(PlayerQuitEvent e){
         if(plugin.inGame){
-            if(plugin.isInGame(e.getPlayer())){
-                map.put(e.getPlayer().getName(), plugin.getJokalaria(e.getPlayer()).getTeam());
-                plugin.leave(e.getPlayer());
+            Player p = e.getPlayer();
+            if(plugin.isInGame(p)){
+                map.put(p.getName(), plugin.getJokalaria(p).getTeam());
+                plugin.leave(p);
             }
         }
       }
       @EventHandler
       public void onJoinTT(PlayerJoinEvent e){
+        Player p = e.getPlayer();
+        String izena = p.getName();
         if(plugin.inGame){
-            if(map.get(e.getPlayer().getName()) != null){       
-                Jokalaria j = new Jokalaria(e.getPlayer());
+            if(map.get(izena) != null){       
+                Jokalaria j = new Jokalaria(p);
                 plugin.jokalariak.add(j);
-                j.setTeam(map.get(e.getPlayer().getName()));
-                Player p = j.getPlayer();
+                j.setTeam(map.get(izena));
                 p.teleport(j.getTeam().getSpawn());
                 p.setHealth(p.getMaxHealth());
                 p.setScoreboard(plugin.board);
+                p.getInventory().clear();
+                p.getInventory().setArmorContents(null);
                 plugin.setArmour(j);
                 plugin.giveItems(j);
-            }else if (e.getPlayer().getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
-                Player p = e.getPlayer();
+            }else if (p.getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
                 p.teleport(plugin.mainLobby);
-                p.getPlayer().getInventory().clear();
-                p.getPlayer().getInventory().setArmorContents(null);
+                p.getInventory().clear();
+                p.getInventory().setArmorContents(null);
             }
-        }else if(e.getPlayer().getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
-                Player p = e.getPlayer();
+        }else if(p.getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
                 p.teleport(plugin.mainLobby);
-                p.getPlayer().getInventory().clear();
-                p.getPlayer().getInventory().setArmorContents(null);
+                p.getInventory().clear();
+                p.getInventory().setArmorContents(null);
         }
       }
       
@@ -133,24 +135,26 @@ public class GameListener implements Listener{
         if(plugin.inGame){
             if(plugin.isInGame(e.getPlayer())){
                     if(plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getPlayer().getLocation())){
-                        e.getPlayer().teleport(plugin.getJokalaria(e.getPlayer()).getTeam().getSpawn());
-                        if(plugin.getJokalaria(e.getPlayer()).getTeam().getID().equalsIgnoreCase("urdina")){
-                           plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
-                           plugin.Broadcast(ChatColor.BLUE +  e.getPlayer().getName() + "-(e)k tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
-                           if(plugin.scoreUrdina.getScore() == 10){
-                               plugin.amaiera(plugin.urdina,plugin.gorria);
-                           }
-                        }
-                        else{
-                            plugin.scoreGorria.setScore((plugin.scoreGorria.getScore()+1));
-                            plugin.Broadcast(ChatColor.RED + e.getPlayer().getName() + "-(e)k tantoa egin du (" + plugin.scoreGorria.getScore() + ")");
-                             if(plugin.scoreGorria.getScore() == 10){
-                                       plugin.amaiera(plugin.gorria,plugin.urdina);
-                                   }
-                        }
-                        for(Jokalaria j : plugin.jokalariak){
-                            j.getPlayer().getWorld().playSound(j.getPlayer().getLocation(),Sound.NOTE_PLING, 10, 1);
-                        }
+                        if(!e.getPlayer().isDead()){
+                            e.getPlayer().teleport(plugin.getJokalaria(e.getPlayer()).getTeam().getSpawn());
+                            if(plugin.getJokalaria(e.getPlayer()).getTeam().getID().equalsIgnoreCase("urdina")){
+                               plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
+                               plugin.Broadcast(ChatColor.BLUE +  e.getPlayer().getName() + "-(e)k tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
+                               if(plugin.scoreUrdina.getScore() == 10){
+                                   plugin.amaiera(plugin.urdina,plugin.gorria);
+                               }
+                            }
+                            else{
+                                plugin.scoreGorria.setScore((plugin.scoreGorria.getScore()+1));
+                                plugin.Broadcast(ChatColor.RED + e.getPlayer().getName() + "-(e)k tantoa egin du (" + plugin.scoreGorria.getScore() + ")");
+                                 if(plugin.scoreGorria.getScore() == 10){
+                                           plugin.amaiera(plugin.gorria,plugin.urdina);
+                                       }
+                            }
+                            for(Jokalaria j : plugin.jokalariak){
+                                j.getPlayer().getWorld().playSound(j.getPlayer().getLocation(),Sound.NOTE_PLING, 10, 1);
+                            }
+                    }
                     }
             }
         }
