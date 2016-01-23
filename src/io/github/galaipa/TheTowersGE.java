@@ -24,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -35,21 +34,13 @@ import org.bukkit.scoreboard.ScoreboardManager;
 public class TheTowersGE extends JavaPlugin{
     ArrayList<Jokalaria> jokalariak = new ArrayList<>();
     ArrayList<Player> ikusleak = new ArrayList<>();
-    Team urdina;
-    Team gorria;
-    Boolean admin;
-    Boolean inGame = false;
-    Score scoreUrdina;
-    Score scoreGorria;
-    String taldea = "urdina";
-    Location lobby;
-    Location mainLobby;
-    Location exp;
-    Location iron;
-    int spawners;
+    Team urdina,gorria;
+    Boolean admin,bozketa,inGame = false;
+    Score scoreUrdina,scoreGorria;
+    Location exp,iron,lobby,mainLobby;
+    int scheduler,bozkak;
     Scoreboard board;
-    public int bozkak;
-    public Boolean bozketa;
+    String taldea = "urdina";
     @Override
     public void onEnable(){
         defaultValues();
@@ -153,6 +144,7 @@ public void join(Player p, String s){
             p.teleport(lobby);
         }else{
             teleportSpawn(j);
+            p.setScoreboard(board);
         }
         
     }public void joinRandom(Player p){
@@ -195,39 +187,37 @@ public void join(Player p, String s){
             setArmour(j); 
             giveItems(j);
     }
-             public void start(){
-                 String arena = "a";
-                  /*  String arena = "";
-                    if(Gui.a == Gui.b){
-                       List<String> randomStrings = new LinkedList<String>();
-                       randomStrings.add("a");
-                       randomStrings.add("b");
-                       Collections.shuffle(randomStrings);
-                       arena = randomStrings.get(0);
-                    }else if (Gui.a > Gui.b){
-                        arena = "a";
-                    }else{
-                        arena = "b";
-                    }*/
-                    loadSpawners(arena);
-                    loadSelection(urdina,arena);
-                    loadSelection(gorria,arena);
-                    inGame = true;
-                    Broadcast(ChatColor.GREEN +"[TheTowers]" + ChatColor.GREEN + "Jokoa orain hasiko da");
-                    BukkitRunnable task = new BukkitRunnable() {
-                    int countdown = 10;
-                    @Override
-                    public void run(){
-                        for(Jokalaria j : jokalariak){
-                            Player p = j.getPlayer();
-                            p.setLevel(countdown);
-                           // p.sendMessage(ChatColor.GREEN + " " + countdown);
-                            p.getWorld().playSound(p.getLocation(),Sound.NOTE_STICKS, 10, 1);
-                            sendTitle(p,20,40,20,ChatColor.YELLOW + Integer.toString(countdown),"");
-                        }
-                        countdown--;
+     public void start(){
+         String arena = "a";
+          /*  String arena = "";
+            if(Gui.a == Gui.b){
+               List<String> randomStrings = new LinkedList<String>();
+               randomStrings.add("a");
+               randomStrings.add("b");
+               Collections.shuffle(randomStrings);
+               arena = randomStrings.get(0);
+            }else if (Gui.a > Gui.b){
+                arena = "a";
+            }else{
+                arena = "b";
+            }*/
+            loadSpawners(arena);
+            loadSelection(urdina,arena);
+            loadSelection(gorria,arena);
+            inGame = true;
+            Broadcast(ChatColor.GREEN +"[TheTowers]" + ChatColor.GREEN + "Jokoa orain hasiko da");
+            scheduler =  Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+                int countdown = 10;
+                @Override
+                public void run(){
+                    for(Jokalaria j : jokalariak){
+                        Player p = j.getPlayer();
+                        p.setLevel(countdown);
+                        p.getWorld().playSound(p.getLocation(),Sound.NOTE_STICKS, 10, 1);
+                        sendTitle(p,20,40,20,ChatColor.YELLOW + Integer.toString(countdown),"");
+                    }
+                    countdown--;
                     if (countdown < 0) {
-                        this.cancel();
                         Broadcast(ChatColor.GREEN + "-----------------------------------------------");
                         Broadcast(ChatColor.BOLD.toString());
                         Broadcast(ChatColor.WHITE + "                         §lThe Towers");
@@ -241,12 +231,13 @@ public void join(Player p, String s){
                         setScoreBoard();
                         Spawners();
                     }
-                    }
-                    };task.runTaskTimer(this, 0L, 20L);
+                }
+            },0, 20);
 
-            }
+    }
     public void Spawners(){
-        spawners = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+        Bukkit.getScheduler().cancelTask(scheduler);
+        scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
             World w = urdina.getSpawn().getWorld();
             @Override
             public void run(){  
@@ -301,7 +292,7 @@ public void join(Player p, String s){
                 p.setGameMode(GameMode.SURVIVAL);
             }
         }
-        Bukkit.getScheduler().cancelTask(spawners);
+        Bukkit.getScheduler().cancelTask(scheduler);
         defaultValues(); 
         WorldReset.resetWorld("TheTowersMapa");
     }
@@ -327,23 +318,23 @@ public void join(Player p, String s){
             
     }
     public ItemStack getColorArmor(Material m, Color c) {
-            ItemStack i = new ItemStack(m, 1);
-            LeatherArmorMeta meta = (LeatherArmorMeta) i.getItemMeta();
-            meta.setColor(c);
-            meta.setDisplayName("Arropa");
-            i.setItemMeta(meta);
-            return i;
+        ItemStack i = new ItemStack(m, 1);
+        LeatherArmorMeta meta = (LeatherArmorMeta) i.getItemMeta();
+        meta.setColor(c);
+        meta.setDisplayName("Arropa");
+        i.setItemMeta(meta);
+        return i;
         }
     public void Broadcast(String s){
-              for(Jokalaria j : jokalariak){
-                  Player p = j.getPlayer();
-                  p.sendMessage(s);
-              }
-              for(Player p : ikusleak){
-                  if(p.isOnline()){
-                    p.sendMessage(s);
-                  }
-              }
+      for(Jokalaria j : jokalariak){
+          Player p = j.getPlayer();
+          p.sendMessage(s);
+      }
+      for(Player p : ikusleak){
+          if(p.isOnline()){
+            p.sendMessage(s);
+          }
+      }
           }
     public  void sendTitleAll(Integer fadeIn, Integer stay, Integer fadeOut, String title, String subtitle){
               for(Jokalaria j : jokalariak){
@@ -377,6 +368,7 @@ public void join(Player p, String s){
             }
         }
         return false;
+        
     }
     public Jokalaria getJokalaria(Player p){
         for(Jokalaria j : jokalariak){

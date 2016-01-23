@@ -159,25 +159,6 @@ public class GameListener implements Listener{
             }
         }
       }
-    /*  @EventHandler
-     public void onPDetectTT(PlayerMoveEvent e) {
-         if(e.getPlayer().getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
-             Player p = e.getPlayer();
-             if(!p.isOp()){
-                 if(plugin.inGame){
-                     if(!plugin.isInGame(e.getPlayer())){
-                        p.teleport(plugin.mainLobby);
-                        p.getPlayer().getInventory().clear();
-                        p.getPlayer().getInventory().setArmorContents(null);
-                     }
-                 }else{
-                        p.teleport(plugin.mainLobby);
-                        p.getPlayer().getInventory().clear();
-                        p.getPlayer().getInventory().setArmorContents(null);
-                 }
-             }
-         }
-     }*/
      @EventHandler
      public void onAdminMenuTT(BlockPlaceEvent e){
          if(plugin.admin){
@@ -234,7 +215,6 @@ public class GameListener implements Listener{
      
       @EventHandler
       public void PlayerCommand(PlayerCommandPreprocessEvent event) {
-          if(plugin.inGame){
               Player p = event.getPlayer();
               if(plugin.isInGame(event.getPlayer())){
                       if(event.getMessage().toLowerCase().startsWith("/thetowers")){
@@ -246,7 +226,6 @@ public class GameListener implements Listener{
                       else if(event.getMessage().toLowerCase().startsWith("/laguntza")){
                         }
                       else if(p.hasPermission("tt.admin")){
-                          
                       }
                       else{
                        event.setCancelled(true);
@@ -254,7 +233,6 @@ public class GameListener implements Listener{
                       }
 
               }
-          }
       }
         public static void adminGui(Player p, String arena){
            arena2 = arena;
