@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -130,35 +131,52 @@ public class GameListener implements Listener{
             }
         }
       }
+     public void tantoa(Player p,int Irabazi){
+        p.teleport(plugin.getJokalaria(p).getTeam().getSpawn());
+        if(plugin.getJokalaria(p).getTeam().getID().equalsIgnoreCase("urdina")){
+           plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
+           plugin.Broadcast(ChatColor.BLUE +  p.getName() + "-(e)k tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
+           if(plugin.scoreUrdina.getScore() == 10){
+               plugin.amaiera(plugin.urdina,plugin.gorria);
+           }
+        }
+        else{
+            plugin.scoreGorria.setScore((plugin.scoreGorria.getScore()+1));
+            plugin.Broadcast(ChatColor.RED + p.getName() + "-(e)k tantoa egin du (" + plugin.scoreGorria.getScore() + ")");
+             if(plugin.scoreGorria.getScore() == Irabazi){
+                       plugin.amaiera(plugin.gorria,plugin.urdina);
+                   }
+        }
+        for(Jokalaria j : plugin.jokalariak){
+            j.getPlayer().getWorld().playSound(j.getPlayer().getLocation(),Sound.NOTE_PLING, 10, 1);
+        }
+     }
       @EventHandler
      public void onMoveTT(PlayerMoveEvent e) {
-        if(plugin.inGame){
-            if(plugin.isInGame(e.getPlayer())){
-                    if(plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getPlayer().getLocation())){
-                        if(!e.getPlayer().isDead()){
-                            e.getPlayer().teleport(plugin.getJokalaria(e.getPlayer()).getTeam().getSpawn());
-                            if(plugin.getJokalaria(e.getPlayer()).getTeam().getID().equalsIgnoreCase("urdina")){
-                               plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
-                               plugin.Broadcast(ChatColor.BLUE +  e.getPlayer().getName() + "-(e)k tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
-                               if(plugin.scoreUrdina.getScore() == 10){
-                                   plugin.amaiera(plugin.urdina,plugin.gorria);
-                               }
-                            }
-                            else{
-                                plugin.scoreGorria.setScore((plugin.scoreGorria.getScore()+1));
-                                plugin.Broadcast(ChatColor.RED + e.getPlayer().getName() + "-(e)k tantoa egin du (" + plugin.scoreGorria.getScore() + ")");
-                                 if(plugin.scoreGorria.getScore() == 10){
-                                           plugin.amaiera(plugin.gorria,plugin.urdina);
-                                       }
-                            }
-                            for(Jokalaria j : plugin.jokalariak){
-                                j.getPlayer().getWorld().playSound(j.getPlayer().getLocation(),Sound.NOTE_PLING, 10, 1);
-                            }
-                    }
-                    }
+        if(plugin.jokoa.equalsIgnoreCase("The Towers")){
+            if(plugin.inGame){
+                if(plugin.isInGame(e.getPlayer())){
+                        if(plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getPlayer().getLocation())){
+                            if(!e.getPlayer().isDead()){
+                                tantoa(e.getPlayer(),10);
+                        }
+                        }
+                }
             }
         }
       }
+     @EventHandler
+     public void DTNtantoa(BlockBreakEvent e){
+        if(plugin.jokoa.equalsIgnoreCase("Destroy The Nexus")){
+            if(plugin.inGame){
+                if(plugin.isInGame(e.getPlayer())){
+                    if(plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getBlock().getLocation())){
+                        tantoa(e.getPlayer(),3);
+                    }
+                }
+            }
+        }
+     }
      @EventHandler
      public void onAdminMenuTT(BlockPlaceEvent e){
          if(plugin.admin){
@@ -192,18 +210,18 @@ public class GameListener implements Listener{
                     plugin.exp = e.getBlock().getLocation();
                     p.sendMessage("Exp");
                     e.setCancelled(true);
-                }else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Lobby")){
+                }/*else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Lobby")){
                     plugin.lobby = e.getBlock().getLocation();
                     p.sendMessage("Lobby-a");
                     e.setCancelled(true);
-                }
+                }*/
                 
                 else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Gorde")){
-                    plugin.saveSelection(arena2,"gorria", l1_red, l2_red);
-                    plugin.saveSelection(arena2,"urdina", l1_blue, l2_blue);
+                    plugin.saveSelection(arena2,"gorria", l1_blue, l2_blue);
+                    plugin.saveSelection(arena2,"urdina", l1_red, l2_red);
                     plugin.SaveSpawn(arena2,plugin.iron, "iron");
                     plugin.SaveSpawn(arena2,plugin.exp, "exp");
-                    plugin.SaveSpawn(arena2,plugin.lobby, "lobby");
+                  //  plugin.SaveSpawn(arena2,plugin.lobby, "lobby");
                     plugin.admin = false;
                     p.getInventory().clear();
                     e.setCancelled(true);
@@ -229,7 +247,7 @@ public class GameListener implements Listener{
                       }
                       else{
                        event.setCancelled(true);
-                       p.sendMessage(ChatColor.GREEN +"[TheTowers]" + ChatColor.RED + "Ezin duzu komandorik erabili jolasten zaudenean");
+                       p.sendMessage(ChatColor.GREEN + plugin.jokoa + ChatColor.RED + "Ezin duzu komandorik erabili jolasten zaudenean");
                       }
 
               }
@@ -242,7 +260,7 @@ public class GameListener implements Listener{
            inv.addItem(item(Material.STAINED_CLAY,14,1,ChatColor.GREEN + "Point B (Gorria)"));
            inv.addItem(item(Material.STAINED_CLAY,11,1,ChatColor.GREEN + "Point A (Urdina)"));
            inv.addItem(item(Material.STAINED_CLAY,11,1,ChatColor.GREEN + "Point B (Urdina)"));
-           inv.addItem(item(Material.STAINED_CLAY,7,1,ChatColor.GREEN + "Lobby"));
+          // inv.addItem(item(Material.STAINED_CLAY,7,1,ChatColor.GREEN + "Lobby"));
            inv.addItem(item(Material.STAINED_CLAY,9,1,ChatColor.GREEN + "Burdina"));
            inv.addItem(item(Material.STAINED_CLAY,1,1,ChatColor.GREEN + "Exp"));
            inv.addItem(item(Material.STAINED_CLAY,13,1,ChatColor.GREEN + "Gorde"));

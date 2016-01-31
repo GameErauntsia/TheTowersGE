@@ -40,7 +40,7 @@ public class TheTowersGE extends JavaPlugin{
     Location exp,iron,lobby,mainLobby;
     int scheduler,bozkak;
     Scoreboard board;
-    String taldea = "urdina";
+    String jokoa = "The Towers";
     @Override
     public void onEnable(){
         defaultValues();
@@ -71,7 +71,7 @@ public class TheTowersGE extends JavaPlugin{
                 GEAPI.gehituStat("ttirabazi", 1, p);
             }else if (args[0].equalsIgnoreCase("join")){
                 if(getJokalaria(p) != null){
-                    p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Dagoeneko bazaude sartuta");
+                    p.sendMessage(ChatColor.GREEN + jokoa +ChatColor.RED + "Dagoeneko bazaude sartuta");
                     return true;
                 }else{
                     Gui.openGui(p);
@@ -83,18 +83,15 @@ public class TheTowersGE extends JavaPlugin{
                 }else if(jokalariak.contains(getJokalaria(p))){
                     leave(p);
                 }else{
-                     p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Ez zaude partidan");
+                     p.sendMessage(ChatColor.GREEN + jokoa +ChatColor.RED + "Ez zaude partidan");
                 }
-                return true;
-            }else if (args[0].equalsIgnoreCase("vip")){
-                p.openInventory(Gui.vipGUI);
                 return true;
             }
         }else if(cmd.getName().equalsIgnoreCase("thetowersadmin")){
             if(args.length < 1){
                 
             }else if(args[0].equalsIgnoreCase("start")){
-                start();
+                start(args[1]);
                 return true;
             }else if (args[0].equalsIgnoreCase("spawn")){
                 SaveSpawn(args[2],p.getLocation(),args[1]);
@@ -133,10 +130,10 @@ public void join(Player p, String s){
         jokalariak.add(j);
         if(s.equalsIgnoreCase("gorria")){
             j.setTeam(gorria);
-            p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Talde gorrian sartu zara");
+            p.sendMessage(ChatColor.GREEN +"["+ jokoa  + "]"+ChatColor.RED + " Talde gorrian sartu zara");
         }else{
             j.setTeam(urdina);
-            p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Talde urdinean sartu zara");
+            p.sendMessage(ChatColor.GREEN +"["+ jokoa  + "]"+ChatColor.BLUE + " Talde urdinean sartu zara");
         }
         if(!inGame){
             Gui.maingui(j);
@@ -158,19 +155,19 @@ public void join(Player p, String s){
         ikusleak.add(p);
         p.teleport(exp);
         p.setScoreboard(board);
-        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.BLUE + "Ikuslegoan sartu zara");
+        p.sendMessage(ChatColor.GREEN +"["+ jokoa  + "]"+ChatColor.RED + " Ikuslegoan sartu zara");
         p.setGameMode(GameMode.SPECTATOR);
     }public void leaveSpectator(Player p){
         ikusleak.remove(p);
         p.teleport(mainLobby);
-        p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
+        p.sendMessage(ChatColor.GREEN +"["+ jokoa + "]"+ChatColor.RED + " Jokotik irten zara");
         p.setGameMode(GameMode.SURVIVAL);
     }
     public void leave(Player p){
        Jokalaria j = getJokalaria(p);
        if(p.isOnline()){
            p.teleport(mainLobby);
-           p.sendMessage(ChatColor.GREEN +"[TheTowers] " +ChatColor.RED + "Jokotik irten zara");
+           p.sendMessage(ChatColor.GREEN +"["+ jokoa + "]"+ChatColor.RED + " Jokotik irten zara");
            j.returnInv();
            p.updateInventory();
        }
@@ -187,25 +184,11 @@ public void join(Player p, String s){
             setArmour(j); 
             giveItems(j);
     }
-     public void start(){
-         String arena = "a";
-          /*  String arena = "";
-            if(Gui.a == Gui.b){
-               List<String> randomStrings = new LinkedList<String>();
-               randomStrings.add("a");
-               randomStrings.add("b");
-               Collections.shuffle(randomStrings);
-               arena = randomStrings.get(0);
-            }else if (Gui.a > Gui.b){
-                arena = "a";
-            }else{
-                arena = "b";
-            }*/
-            loadSpawners(arena);
+     public void start(final String arena){
             loadSelection(urdina,arena);
             loadSelection(gorria,arena);
             inGame = true;
-            Broadcast(ChatColor.GREEN +"[TheTowers]" + ChatColor.GREEN + "Jokoa orain hasiko da");
+            Broadcast(ChatColor.GREEN + jokoa + ChatColor.GREEN + "Jokoa orain hasiko da");
             scheduler =  Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
                 int countdown = 10;
                 @Override
@@ -220,7 +203,7 @@ public void join(Player p, String s){
                     if (countdown < 0) {
                         Broadcast(ChatColor.GREEN + "-----------------------------------------------");
                         Broadcast(ChatColor.BOLD.toString());
-                        Broadcast(ChatColor.WHITE + "                         §lThe Towers");
+                        Broadcast(ChatColor.WHITE + "                         §l" + jokoa);
                         Broadcast(ChatColor.GREEN + "                   " + "Zorte on guztiei!") ;
                         Broadcast(ChatColor.GREEN + "                " + "Partida 10 puntutara da");
                         Broadcast(ChatColor.BOLD.toString());
@@ -229,7 +212,11 @@ public void join(Player p, String s){
                             teleportSpawn(j);
                         }
                         setScoreBoard();
-                        Spawners();
+                        if(jokoa.equalsIgnoreCase("The Towers")){
+                            loadSpawners(arena);
+                        }else{
+                            Bukkit.getScheduler().cancelTask(scheduler);
+                        }
                     }
                 }
             },0, 20);
@@ -249,9 +236,9 @@ public void join(Player p, String s){
     public void setScoreBoard(){
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         board = manager.getNewScoreboard();
-        Objective objective = board.registerNewObjective("The Towers", "dummy");
+        Objective objective = board.registerNewObjective(jokoa, "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(ChatColor.GOLD +"The Towers");
+        objective.setDisplayName(ChatColor.GOLD + jokoa);
         scoreGorria = objective.getScore(ChatColor.RED + "Gorriak:"); 
         scoreUrdina = objective.getScore(ChatColor.BLUE + "Urdinak:");
         scoreGorria.setScore(0);
@@ -263,7 +250,7 @@ public void join(Player p, String s){
     public void amaiera(Team irabazlea, Team galtzailea){
         inGame = false;
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
-        Broadcast(ChatColor.GREEN + "            TheTowers partida amaitu da         ");
+        Broadcast(ChatColor.GREEN + "            "+ jokoa + " partida amaitu da         ");
         Broadcast(ChatColor.GREEN + "            Irabazlea: talde " + irabazlea.getID());
         Broadcast(ChatColor.YELLOW + "------------------------------------------------");
         for(Jokalaria j : irabazlea.getPlayers()){
@@ -405,7 +392,7 @@ public void join(Player p, String s){
         Double z2 = getConfig().getDouble(arena + ".Win." + s.getID() + ".Max.z");
         Location l1 = new Location(Bukkit.getServer().getWorld(w), x, y, z);
         Location l2 = new Location(Bukkit.getServer().getWorld(w), x2, y2, z2);
-                s.setWin(l1, l2);
+        s.setWin(l1, l2);
     }
    public void SaveSpawn(String arena, Location l,String t){;
         getConfig().set(arena + ".Spawn."+ t +".World", l.getWorld().getName());
@@ -432,6 +419,7 @@ public void join(Player p, String s){
         Double y2 = getConfig().getDouble(arena + ".Spawn.iron.Y");
         Double z2 = getConfig().getDouble(arena + ".Spawn.iron.Z");
         iron =new Location(Bukkit.getServer().getWorld(w), x2, y2, z2);
+        Spawners();
    }
    
    

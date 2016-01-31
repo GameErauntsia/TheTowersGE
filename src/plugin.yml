@@ -13,6 +13,7 @@ commands:
     description: TT administratzaile komandoa
     usage: /<command>  
     aliases: [ttadmin]  
+    permission: tt.admin
 permissions:
   tt.user:
     description: Jokalarien komandoak erabiltzeko baimena
