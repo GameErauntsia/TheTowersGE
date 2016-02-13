@@ -2,10 +2,14 @@ package io.github.galaipa;
 
 
 import java.util.HashMap;
+import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand;
+import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand.EnumClientCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,13 +44,21 @@ public class GameListener implements Listener{
       public void onDeathTT(PlayerDeathEvent e){
         if(plugin.inGame){
             if(plugin.isInGame(e.getEntity())){
-                Player killed = e.getEntity();
+                final Player killed = e.getEntity();
                 e.setDeathMessage("");
                 if(killed.getKiller() != null && killed.getKiller() instanceof Player){
                     plugin.Broadcast(ChatColor.YELLOW + killed.getKiller().getName() + "-(e)k " + killed.getName() + " hil du");
                 }
-            }
+                Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable(){
+                    @Override
+                     public void run()
+                    {
+                      PacketPlayInClientCommand packet = new PacketPlayInClientCommand(EnumClientCommand.PERFORM_RESPAWN);
+                      ((CraftPlayer)killed).getHandle().playerConnection.a(packet);
+                    }
+                  }, 1);
         } 
+        }
           } 
     @EventHandler
         public void noTeamKillTT(EntityDamageByEntityEvent event){
