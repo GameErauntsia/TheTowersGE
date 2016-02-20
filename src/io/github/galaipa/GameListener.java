@@ -6,6 +6,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand;
 import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand.EnumClientCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -28,6 +29,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameListener implements Listener{
         private Location l1_blue;
@@ -105,20 +107,26 @@ public class GameListener implements Listener{
       }
       @EventHandler
       public void onJoinTT(PlayerJoinEvent e){
-        Player p = e.getPlayer();
+        final Player p = e.getPlayer();
         String izena = p.getName();
         if(plugin.inGame){
             if(map.get(izena) != null){       
-                Jokalaria j = new Jokalaria(p);
+                final Jokalaria j = new Jokalaria(p);
                 plugin.jokalariak.add(j);
                 j.setTeam(map.get(izena));
                 p.teleport(j.getTeam().getSpawn());
                 p.setHealth(p.getMaxHealth());
                 p.setScoreboard(plugin.board);
-                p.getInventory().clear();
-                p.getInventory().setArmorContents(null);
-                plugin.setArmour(j);
-                plugin.giveItems(j);
+                new BukkitRunnable(){
+                    @Override
+                    public void run(){
+                        p.getInventory().clear();
+                        p.getInventory().setArmorContents(null);
+                        plugin.setArmour(j);
+                        plugin.giveItems(j);
+                        this.cancel();
+                     }
+                }.runTaskLater(plugin, 40);
             }else if (p.getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
                 p.teleport(plugin.mainLobby);
                 p.getInventory().clear();

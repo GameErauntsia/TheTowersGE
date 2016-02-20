@@ -24,6 +24,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -151,12 +153,18 @@ public void join(Player p, String s){
              join(p,"gorria");
          }
     }
-    public void joinSpectator(Player p){
+    public void joinSpectator(final Player p){
         ikusleak.add(p);
         p.teleport(exp);
         p.setScoreboard(board);
         p.sendMessage(ChatColor.GREEN +"["+ jokoa  + "]"+ChatColor.RED + " Ikuslegoan sartu zara");
-        p.setGameMode(GameMode.SPECTATOR);
+        new BukkitRunnable(){
+            @Override
+            public void run(){
+                p.setGameMode(GameMode.SPECTATOR);
+                this.cancel();
+             }
+        }.runTaskLater(this, 40);
     }public void leaveSpectator(Player p){
         ikusleak.remove(p);
         p.teleport(mainLobby);
@@ -177,12 +185,18 @@ public void join(Player p, String s){
            reset();
        }
     }
-    public void teleportSpawn(Jokalaria j){
-            Player p = j.getPlayer();
+    public void teleportSpawn(final Jokalaria j){
+            final Player p = j.getPlayer();
             p.teleport(j.getTeam().getSpawn());
-            p.setHealth(p.getMaxHealth());
-            setArmour(j); 
-            giveItems(j);
+            new BukkitRunnable(){
+                @Override
+                public void run(){
+                    p.setHealth(p.getMaxHealth());
+                    setArmour(j); 
+                    giveItems(j);
+                    this.cancel();
+                 }
+            }.runTaskLater(this, 40);
     }
      public void start(final String arena){
             loadSelection(urdina,arena);

@@ -216,7 +216,7 @@ public class Gui implements Listener {
         }else if(plugin.bozketa){
             
         }
-        else if(plugin.bozkak *100 / plugin.jokalariak.size() > 60){
+        else if(plugin.bozkak *100 / plugin.jokalariak.size() > 50){
             plugin.bozketa = true;
             Integer arena = 0;
             String arena2 = "";
