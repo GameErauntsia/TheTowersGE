@@ -102,6 +102,8 @@ public class GameListener implements Listener{
             if(plugin.isInGame(p)){
                 map.put(p.getName(), plugin.getJokalaria(p).getTeam());
                 plugin.leave(p);
+            }else if(plugin.ikusleak.contains(p)){
+                plugin.leaveSpectator(p);
             }
         }
       }
@@ -128,14 +130,22 @@ public class GameListener implements Listener{
                      }
                 }.runTaskLater(plugin, 40);
             }else if (p.getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
-                p.teleport(plugin.mainLobby);
-                p.getInventory().clear();
-                p.getInventory().setArmorContents(null);
+                new BukkitRunnable(){
+                @Override
+                public void run(){
+                    p.teleport(plugin.mainLobby);
+                    this.cancel();
+                }
+                }.runTaskLater(plugin, 40);
             }
         }else if(p.getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
-                p.teleport(plugin.mainLobby);
-                p.getInventory().clear();
-                p.getInventory().setArmorContents(null);
+                new BukkitRunnable(){
+                @Override
+                public void run(){
+                    p.teleport(plugin.mainLobby);
+                    this.cancel();
+                }
+                }.runTaskLater(plugin, 40);
         }
       }
       
@@ -177,7 +187,7 @@ public class GameListener implements Listener{
             if(plugin.inGame){
                 if(plugin.isInGame(e.getPlayer())){
                         if(plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getPlayer().getLocation())){
-                            if(!e.getPlayer().isDead()){
+                            if(!e.getPlayer().isDead() && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
                                 tantoa(e.getPlayer(),10);
                         }
                         }

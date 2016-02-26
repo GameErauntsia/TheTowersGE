@@ -25,7 +25,6 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -37,7 +36,7 @@ public class TheTowersGE extends JavaPlugin{
     ArrayList<Jokalaria> jokalariak = new ArrayList<>();
     ArrayList<Player> ikusleak = new ArrayList<>();
     Team urdina,gorria;
-    Boolean admin,bozketa,inGame = false;
+    Boolean admin,bozketa,itxi,inGame = false;
     Score scoreUrdina,scoreGorria;
     Location exp,iron,lobby,mainLobby;
     int scheduler,bozkak;
@@ -108,12 +107,31 @@ public class TheTowersGE extends JavaPlugin{
                 join(p2,args[2]);
                 p.sendMessage(args[1] + "jokalaria talde" + args[2]+ "-an sartu duzu");
                 return true;
+            }else if(args[0].equalsIgnoreCase("puntuazioa")){
+                if(args.length < 3){
+                     p.sendMessage(ChatColor.RED + "ttadmin puntuazioa gorria urdina");
+                    return true;
+                }
+                scoreUrdina.setScore(Integer.parseInt(args[2])); 
+                scoreGorria.setScore(Integer.parseInt(args[1]));
+                Broadcast(ChatColor.BLUE + "Administratzaile batek puntuazio aldaketa egin du");
+                return true;
+            }else if(args[0].equalsIgnoreCase("itxi")){
+                if(itxi){
+                    itxi = false;
+                    p.sendMessage(ChatColor.GREEN + "Irekita");
+                }else{
+                    itxi = true;
+                    p.sendMessage(ChatColor.RED + "Itxita");
+                }
+                 return true;
             }
         }
         return false;
     }
     public void defaultValues(){
         inGame = false;
+        itxi = false;
         urdina = new Team("urdina");
         gorria = new Team("gorria");
         admin = false;
@@ -167,9 +185,11 @@ public void join(Player p, String s){
         }.runTaskLater(this, 40);
     }public void leaveSpectator(Player p){
         ikusleak.remove(p);
-        p.teleport(mainLobby);
-        p.sendMessage(ChatColor.GREEN +"["+ jokoa + "]"+ChatColor.RED + " Jokotik irten zara");
-        p.setGameMode(GameMode.SURVIVAL);
+        if(p.isOnline()){
+            p.teleport(mainLobby);
+            p.sendMessage(ChatColor.GREEN +"["+ jokoa + "]"+ChatColor.RED + " Jokotik irten zara");
+            p.setGameMode(GameMode.SURVIVAL);
+        }
     }
     public void leave(Player p){
        Jokalaria j = getJokalaria(p);

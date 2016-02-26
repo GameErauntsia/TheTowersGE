@@ -99,7 +99,13 @@ public class Gui implements Listener {
                             player.sendMessage(ChatColor.GREEN +"[TaldeJokoak] " +ChatColor.RED + "Ez da inor jolasten ari");
                         }
                 }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.BLUE + "Jolastu")){
-                    player.openInventory(joinGUI2);
+                    if(plugin.itxi){
+                        player.sendMessage(ChatColor.RED + "Ezin zara partidara sartu");
+                        player.closeInventory();
+                    }else{
+                        player.openInventory(joinGUI2);
+                    }
+                    
                 }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.BLUE + "Estatistikak")){
                     player.sendMessage(ChatColor.GREEN +"==================================================");
                     player.sendMessage(ChatColor.BLUE +"                    TALDE JOKOAK ESTATISTIKAK");
