@@ -2,13 +2,16 @@
 
 Jokoen mundurako sortutako minijokoa, txapelketan erabilitako TheTowers mapak komando blokeen bitartez funtzionatzen zuen, eta ondorioz ezin zen zerbitzarian modu automatiko batean erabili. Plugin bitartez egitean mapa pertsonalizatuak erabiltzeaz gainera, beste hainbat abantaila ditugu, besteak beste puntuaketa sistema gehitzea.
 
-##Komandoak:
-/thetowers join : Jokoan sartzeko
+## Jokalarien komandoak:
 
-/thetowers leave: Jokotik ateratzeko
+    /thetowers join-sartu : Jokoko menua irekitzeko
+    /thetowers leave-atera: Jokotik ateratzeko
+** /thetowers ordez /tt erabil daiteke
 
-/thetowersadmin start : Jokoa hastera behartzeko
+## Administratzaileen komandoak:
 
-##Setup
+    /ttadmin setup (MapaZenbakia) : Mapa bat gehitu edo editatzeko
+    /ttadmin puntuazioa (GorrienPuntuazioa) (UrdinenPuntuazioa): Puntuazioa aldatzeko
+    /ttadmin itxi: Jokoko sarrera itxi edo zabaltzeko
+    /ttadmin join (Jokalaria) (Taldea(gorria/urdina)): Jokalari bat talde jakin batean sartzeko
 
-Bukatu gabe...
