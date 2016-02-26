@@ -70,7 +70,7 @@ public class TheTowersGE extends JavaPlugin{
         if (cmd.getName().equalsIgnoreCase("thetowers")){
             if(args.length < 1){
                 GEAPI.gehituStat("ttirabazi", 1, p);
-            }else if (args[0].equalsIgnoreCase("join")){
+            }else if (args[0].equalsIgnoreCase("join") || args[0].equalsIgnoreCase("sartu")){
                 if(getJokalaria(p) != null){
                     p.sendMessage(ChatColor.GREEN + jokoa +ChatColor.RED + "Dagoeneko bazaude sartuta");
                     return true;
@@ -78,7 +78,7 @@ public class TheTowersGE extends JavaPlugin{
                     Gui.openGui(p);
                     return true;
                 }
-            }else if (args[0].equalsIgnoreCase("leave")){
+            }else if (args[0].equalsIgnoreCase("leave") || args[0].equalsIgnoreCase("atera")){
                 if(ikusleak.contains(p)){
                     leaveSpectator(p);
                 }else if(jokalariak.contains(getJokalaria(p))){
