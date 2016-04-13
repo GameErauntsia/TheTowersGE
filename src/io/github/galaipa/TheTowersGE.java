@@ -162,6 +162,7 @@ public void join(Player p, String s){
         }else{
             teleportSpawn(j);
             p.setScoreboard(board);
+            Broadcast(ChatColor.GREEN + p.getName() +" jokoan sartu da ("+ ChatColor.RED + gorria.getPlayers().size() + ChatColor.GREEN + "/"+ChatColor.BLUE + urdina.getPlayers().size() + ChatColor.GREEN  +")" );
         }
         
     }public void joinRandom(Player p){
@@ -193,14 +194,17 @@ public void join(Player p, String s){
     }
     public void leave(Player p){
        Jokalaria j = getJokalaria(p);
+       if(!inGame){
+           j.returnInv();
+       }
        if(p.isOnline()){
            p.teleport(mainLobby);
            p.sendMessage(ChatColor.GREEN +"["+ jokoa + "]"+ChatColor.RED + " Jokotik irten zara");
-           j.returnInv();
            p.updateInventory();
        }
        jokalariak.remove(j);
        j.getTeam().removePlayer(j);
+       Broadcast(ChatColor.RED + p.getName() +" jokotik irten da"+ChatColor.WHITE +"("+ ChatColor.RED + gorria.getPlayers().size() + ChatColor.WHITE + "/"+ChatColor.BLUE + urdina.getPlayers().size() + ChatColor.WHITE  +")");
        if(jokalariak.isEmpty()){
            reset();
        }
@@ -243,6 +247,7 @@ public void join(Player p, String s){
                         Broadcast(ChatColor.BOLD.toString());
                         Broadcast(ChatColor.GREEN + "-----------------------------------------------");
                         for(Jokalaria j : jokalariak){
+                            j.returnInv();
                             teleportSpawn(j);
                         }
                         setScoreBoard();
@@ -292,7 +297,6 @@ public void join(Player p, String s){
             getPlayerPoints().getAPI().give(p.getUniqueId(), 70);
             p.sendMessage(ChatColor.GREEN + "Zorionak! irabazteagatik 70 puntu irabazi dituzu");
             p.teleport(mainLobby);
-            j.returnInv();
             GEAPI.gehituStat("ttirabazi",1,p);
             GEAPI.gehituStat("ttjokatu",1,p);
         }
@@ -301,7 +305,6 @@ public void join(Player p, String s){
             getPlayerPoints().getAPI().give(p.getUniqueId(), 20);
             p.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! jolasteagatik 20 puntu irabazi dituzu");
             p.getPlayer().teleport(mainLobby);
-            j.returnInv();
             GEAPI.gehituStat("ttjokatu",1,p);
         }
         reset();

@@ -27,6 +27,8 @@ public class Jokalaria {
             return player;
         }
         public void returnInv() {
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(null);
             player.setLevel(exp);
             player.getInventory().setContents(inv);
             player.getInventory().setArmorContents(armor);
