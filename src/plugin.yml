@@ -1,6 +1,6 @@
 name: TheTowersGE
 main: io.github.galaipa.TheTowersGE
-version: 2.5
+version: 2.7
 author: Galaipa 
 description: TheTowers minijoko  plugina
 softdepend: [Vault,PlayerPoints,GameErauntsiaMC,Multiverse-Core]
@@ -8,7 +8,7 @@ commands:
   thetowers:
     description: TT komando nagusia
     usage: /<command>  
-    aliases: [tt]
+    aliases: [tt,dtn]
   thetowersadmin:
     description: TT administratzaile komandoa
     usage: /<command>  

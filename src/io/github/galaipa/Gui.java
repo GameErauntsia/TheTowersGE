@@ -152,7 +152,7 @@ public class Gui implements Listener {
         mapaGUI.setItem(12,item(Material.STAINED_GLASS_PANE,1,1,ChatColor.RED + "The Towers"));
         mapaGUI.setItem(13,item(Material.STAINED_GLASS_PANE,0,1,ChatColor.WHITE + "Talde Jokoak"));
         mapaGUI.setItem(14,item(Material.STAINED_GLASS_PANE,13,1,ChatColor.RED + "Destroy The Nexus"));
-      //  mapaGUI.setItem(15,item(Material.GRASS,1,1,ChatColor.GREEN + "Destroy The Nexus 1"));
+        mapaGUI.setItem(15,item(Material.GRASS,1,1,ChatColor.GREEN + "Destroy The Nexus 1"));
         mapaGUI.setItem(17,item(Material.STAINED_GLASS_PANE,13,1,ChatColor.RED + "Destroy The Nexus"));
         
         mapaGUI.setItem(18,item(Material.STAINED_GLASS_PANE,1,1,ChatColor.RED + "The Towers"));
@@ -233,7 +233,7 @@ public class Gui implements Listener {
                 }
             }
             if(arena2.equalsIgnoreCase("b")){
-                plugin.jokoa = "Destroy The Nexus";
+                plugin.jokoa = "DestroyTheNexus";
             }
             plugin.start(arena2);
             bozketa.clear();

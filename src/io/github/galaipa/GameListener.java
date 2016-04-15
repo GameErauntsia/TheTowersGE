@@ -6,6 +6,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand;
 import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand.EnumClientCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,15 +21,19 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.Dye;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameListener implements Listener{
@@ -39,13 +44,17 @@ public class GameListener implements Listener{
         static String arena2;
         public static HashMap<String, Team> map = new HashMap<>();
         public TheTowersGE plugin;
+        private ItemStack lapis;
         public GameListener(TheTowersGE instance) {
             plugin = instance;
+            Dye d = new Dye();
+            d.setColor(DyeColor.BLUE);
+            this.lapis = d.toItemStack();
+            this.lapis.setAmount(64);
         }
       @EventHandler
       public void onDeathTT(PlayerDeathEvent e){
-        if(plugin.inGame){
-            if(plugin.isInGame(e.getEntity())){
+            if(plugin.isInGame(e.getEntity())&& plugin.inGame){
                 final Player killed = e.getEntity();
                 e.setDeathMessage("");
                 if(killed.getKiller() != null && killed.getKiller() instanceof Player){
@@ -59,7 +68,6 @@ public class GameListener implements Listener{
                       ((CraftPlayer)killed).getHandle().playerConnection.a(packet);
                     }
                   }, 1);
-        } 
         }
           } 
     @EventHandler
@@ -85,37 +93,34 @@ public class GameListener implements Listener{
         }
       @EventHandler(priority = EventPriority.HIGHEST) 
       public void onRespawnTT(PlayerRespawnEvent e){
-        if(plugin.inGame){
-            if(plugin.isInGame(e.getPlayer())){
+            if(plugin.isInGame(e.getPlayer())&& plugin.inGame){
                 Jokalaria j = plugin.getJokalaria(e.getPlayer());
                 e.setRespawnLocation(j.getTeam().getSpawn());
                 plugin.setArmour(j);
                 plugin.giveItems(j);
                 e.getPlayer().setScoreboard(plugin.board);
             }
-        }
       }
       @EventHandler
       public void onLeaveTT(PlayerQuitEvent e){
-        if(plugin.inGame){
-            Player p = e.getPlayer();
-            if(plugin.isInGame(p)){
-                map.put(p.getName(), plugin.getJokalaria(p).getTeam());
-                plugin.leave(p);
-            }else if(plugin.ikusleak.contains(p)){
-                plugin.leaveSpectator(p);
+        Player p = e.getPlayer();
+        if(plugin.jokalariak.contains(plugin.getJokalaria(p))){
+            if(plugin.inGame){
+                map.put(p.getName(), plugin.getJokalaria(p).getTeam()); 
             }
-        }
+            plugin.leave(p);
+        }else if(plugin.ikusleak.contains(p)){
+          plugin.leaveSpectator(p);
+      }
       }
       @EventHandler
       public void onJoinTT(PlayerJoinEvent e){
         final Player p = e.getPlayer();
         String izena = p.getName();
-        if(plugin.inGame){
-            if(map.get(izena) != null){       
-                final Jokalaria j = new Jokalaria(p);
-                plugin.jokalariak.add(j);
-                j.setTeam(map.get(izena));
+        if(map.get(izena) != null){       
+            final Jokalaria j = new Jokalaria(p);
+            plugin.jokalariak.add(j);
+            j.setTeam(map.get(izena));
                 p.teleport(j.getTeam().getSpawn());
                 p.setHealth(p.getMaxHealth());
                 p.setScoreboard(plugin.board);
@@ -129,44 +134,32 @@ public class GameListener implements Listener{
                         this.cancel();
                      }
                 }.runTaskLater(plugin, 40);
-            }else if (p.getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
-                new BukkitRunnable(){
-                @Override
-                public void run(){
-                    p.teleport(plugin.mainLobby);
-                    this.cancel();
-                }
-                }.runTaskLater(plugin, 40);
+        }else if (p.getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
+            new BukkitRunnable(){
+            @Override
+            public void run(){
+                p.teleport(plugin.mainLobby);
+                this.cancel();
             }
-        }else if(p.getLocation().getWorld().getName().equalsIgnoreCase("TheTowersMapa")){
-                new BukkitRunnable(){
-                @Override
-                public void run(){
-                    p.teleport(plugin.mainLobby);
-                    this.cancel();
-                }
-                }.runTaskLater(plugin, 40);
-        }
+            }.runTaskLater(plugin, 40);
+    }
       }
       
       @EventHandler
       public void onPickUpTT(PlayerPickupItemEvent e){
-        if(plugin.inGame){
-            if(plugin.isInGame(e.getPlayer())){
+            if(plugin.isInGame(e.getPlayer())&& plugin.inGame){
                 ItemStack i = e.getItem().getItemStack();
                 if(i.hasItemMeta() && i.getItemMeta().hasDisplayName() && i.getItemMeta().getDisplayName().equalsIgnoreCase("Arropa")){
                     e.getItem().remove();
                     e.setCancelled(true);
                 }
             }
-        }
       }
      public void tantoa(Player p,int Irabazi){
-        p.teleport(plugin.getJokalaria(p).getTeam().getSpawn());
         if(plugin.getJokalaria(p).getTeam().getID().equalsIgnoreCase("urdina")){
            plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
            plugin.Broadcast(ChatColor.BLUE +  p.getName() + "-(e)k tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
-           if(plugin.scoreUrdina.getScore() == 10){
+           if(plugin.scoreUrdina.getScore() == Irabazi){
                plugin.amaiera(plugin.urdina,plugin.gorria);
            }
         }
@@ -182,29 +175,30 @@ public class GameListener implements Listener{
         }
      }
       @EventHandler
-     public void onMoveTT(PlayerMoveEvent e) {
+     public void tantoaTT(PlayerMoveEvent e) {
         if(plugin.jokoa.equalsIgnoreCase("The Towers")){
-            if(plugin.inGame){
-                if(plugin.isInGame(e.getPlayer())){
-                        if(plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getPlayer().getLocation())){
-                            if(!e.getPlayer().isDead() && e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
-                                tantoa(e.getPlayer(),10);
+                if(plugin.isInGame(e.getPlayer())&& plugin.inGame){
+                    Player p = e.getPlayer();
+                        if(plugin.getJokalaria(p).getTeam().getWin().contains(p.getLocation())){
+                            if(!p.isDead() && p.getGameMode().equals(GameMode.SURVIVAL)){
+                                tantoa(p,10);
+                                p.teleport(plugin.getJokalaria(p).getTeam().getSpawn());
                         }
                         }
                 }
             }
-        }
       }
      @EventHandler
-     public void DTNtantoa(BlockBreakEvent e){
-        if(plugin.jokoa.equalsIgnoreCase("Destroy The Nexus")){
-            if(plugin.inGame){
-                if(plugin.isInGame(e.getPlayer())){
-                    if(plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getBlock().getLocation())){
-                        tantoa(e.getPlayer(),3);
+     public void tantoaDTN(BlockBreakEvent e){
+        if(plugin.jokoa.equalsIgnoreCase("DestroyTheNexus")){
+                if(plugin.isInGame(e.getPlayer())&& plugin.inGame){
+                    if(plugin.kontrakoTaldea(e.getPlayer()).getWin().contains(e.getBlock().getLocation())){
+                        e.setCancelled(true);
+                    }else if (plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getBlock().getLocation())){
+                        e.setCancelled(true);
+                        tantoa(e.getPlayer(),25);
                     }
                 }
-            }
         }
      }
      @EventHandler
@@ -302,5 +296,21 @@ public class GameListener implements Listener{
             metaB.setDisplayName(name);
             b.setItemMeta(metaB);
             return b;
-    }  
+    }
+    @EventHandler
+    public void openInventoryEvent(InventoryOpenEvent e) {
+        if (e.getInventory() instanceof EnchantingInventory) {
+            if(plugin.isInGame((Player) e.getPlayer())){
+                    e.getInventory().setItem(1, this.lapis); //Lapis goian definitua
+            }
+        }
+    }
+    @EventHandler
+    public void closeInventoryEvent(InventoryCloseEvent e) {
+        if (e.getInventory() instanceof EnchantingInventory) {
+            if(plugin.isInGame((Player) e.getPlayer())){
+                    e.getInventory().setItem(1, null);
+            }
+        }
+    }
 }

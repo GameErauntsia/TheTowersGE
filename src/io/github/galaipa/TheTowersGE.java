@@ -95,7 +95,7 @@ public class TheTowersGE extends JavaPlugin{
                 start(args[1]);
                 return true;
             }else if (args[0].equalsIgnoreCase("spawn")){
-                SaveSpawn(args[2],p.getLocation(),args[1]);
+                SaveSpawn(args[1],p.getLocation(),args[2]);
                 p.sendMessage("Spawn set");
                 return true;
             }else if (args[0].equalsIgnoreCase("setup")){
@@ -194,7 +194,7 @@ public void join(Player p, String s){
     }
     public void leave(Player p){
        Jokalaria j = getJokalaria(p);
-       if(!inGame){
+       if(!inGame || p.isOp()){
            j.returnInv();
        }
        if(p.isOnline()){
@@ -226,7 +226,7 @@ public void join(Player p, String s){
             loadSelection(urdina,arena);
             loadSelection(gorria,arena);
             inGame = true;
-            Broadcast(ChatColor.GREEN + jokoa + ChatColor.GREEN + "Jokoa orain hasiko da");
+            Broadcast(ChatColor.GREEN + jokoa + ChatColor.GREEN + " jokoa orain hasiko da");
             scheduler =  Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
                 int countdown = 10;
                 @Override
@@ -242,8 +242,8 @@ public void join(Player p, String s){
                         Broadcast(ChatColor.GREEN + "-----------------------------------------------");
                         Broadcast(ChatColor.BOLD.toString());
                         Broadcast(ChatColor.WHITE + "                         §l" + jokoa);
-                        Broadcast(ChatColor.GREEN + "                   " + "Zorte on guztiei!") ;
-                        Broadcast(ChatColor.GREEN + "                " + "Partida 10 puntutara da");
+                        Broadcast(ChatColor.BOLD.toString());
+                        Broadcast(ChatColor.GREEN + "                          " + "Zorte on guztiei!") ;
                         Broadcast(ChatColor.BOLD.toString());
                         Broadcast(ChatColor.GREEN + "-----------------------------------------------");
                         for(Jokalaria j : jokalariak){
@@ -295,7 +295,7 @@ public void join(Player p, String s){
         for(Jokalaria j : irabazlea.getPlayers()){
             Player p = j.getPlayer();
             getPlayerPoints().getAPI().give(p.getUniqueId(), 70);
-            p.sendMessage(ChatColor.GREEN + "Zorionak! irabazteagatik 70 puntu irabazi dituzu");
+            p.sendMessage(ChatColor.GREEN + "Zorionak! irabazteagatik 70 puntu lortu dituzu");
             p.teleport(mainLobby);
             GEAPI.gehituStat("ttirabazi",1,p);
             GEAPI.gehituStat("ttjokatu",1,p);
@@ -303,7 +303,7 @@ public void join(Player p, String s){
         for(Jokalaria j : galtzailea.getPlayers()){
             Player p = j.getPlayer();
             getPlayerPoints().getAPI().give(p.getUniqueId(), 20);
-            p.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! jolasteagatik 20 puntu irabazi dituzu");
+            p.getPlayer().sendMessage(ChatColor.GREEN + "Zorionak! jolasteagatik 20 puntu lortu dituzu");
             p.getPlayer().teleport(mainLobby);
             GEAPI.gehituStat("ttjokatu",1,p);
         }
@@ -392,7 +392,6 @@ public void join(Player p, String s){
             }
         }
         return false;
-        
     }
     public Jokalaria getJokalaria(Player p){
         for(Jokalaria j : jokalariak){
@@ -458,7 +457,13 @@ public void join(Player p, String s){
         iron =new Location(Bukkit.getServer().getWorld(w), x2, y2, z2);
         Spawners();
    }
-   
+   public Team kontrakoTaldea(Player p){
+       if(getJokalaria(p).getTeam().equals(urdina)){
+           return gorria;
+       }else{
+           return urdina;
+       }
+   }
    
     private PlayerPoints playerPoints;
     private boolean hookPlayerPoints() {
@@ -477,4 +482,5 @@ public void join(Player p, String s){
         return GEAPI != null; 
     }
     private GEAPI GEAPI;
+    
 }

@@ -20,8 +20,8 @@ public class SignListener implements Listener {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK){
             if (e.getClickedBlock().getState() instanceof Sign) { 
                 Sign sign = (Sign) e.getClickedBlock().getState();
-                if(sign.getLine(0).equalsIgnoreCase("[TheTowers]")) {
-                    if(sign.getLine(2).equals("Sartu")) {
+                if(sign.getLine(0).equalsIgnoreCase("[TaldeJokoak]")) {
+                    if(sign.getLine(2).equals("Menua")) {
                         Gui.openGui(p);
                     }
                 }
