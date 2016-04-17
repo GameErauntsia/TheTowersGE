@@ -11,6 +11,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -192,11 +193,19 @@ public class GameListener implements Listener{
      public void tantoaDTN(BlockBreakEvent e){
         if(plugin.jokoa.equalsIgnoreCase("DestroyTheNexus")){
                 if(plugin.isInGame(e.getPlayer())&& plugin.inGame){
-                    if(plugin.kontrakoTaldea(e.getPlayer()).getWin().contains(e.getBlock().getLocation())){
+                    Block b = e.getBlock();
+                    if(plugin.kontrakoTaldea(e.getPlayer()).getWin().contains(b.getLocation())){
                         e.setCancelled(true);
-                    }else if (plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(e.getBlock().getLocation())){
+                    }else if (plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(b.getLocation())){
                         e.setCancelled(true);
                         tantoa(e.getPlayer(),25);
+                    }else if ((b.getType() == Material.IRON_ORE) 
+                            ||(b.getType() == Material.LAPIS_ORE)
+                            ||(b.getType() == Material.REDSTONE_ORE)
+                            ||(b.getType() == Material.LOG)
+                            ||(b.getType() == Material.LOG_2)
+                            ||(b.getType() == Material.COAL_ORE)){
+                        plugin.blokeak.put(b,b.getType());
                     }
                 }
         }

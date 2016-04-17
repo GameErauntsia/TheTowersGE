@@ -4,6 +4,7 @@ package io.github.galaipa;
 import de.goldengamerzone.worldreset.WorldReset;
 import static io.github.galaipa.GameListener.item;
 import java.util.ArrayList;
+import java.util.HashMap;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
@@ -16,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -35,6 +37,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 public class TheTowersGE extends JavaPlugin{
     ArrayList<Jokalaria> jokalariak = new ArrayList<>();
     ArrayList<Player> ikusleak = new ArrayList<>();
+    public static HashMap<Block, Material> blokeak = new HashMap<>();
     Team urdina,gorria;
     Boolean admin,bozketa,itxi,inGame = false;
     Score scoreUrdina,scoreGorria;
@@ -255,6 +258,7 @@ public void join(Player p, String s){
                             loadSpawners(arena);
                         }else{
                             Bukkit.getScheduler().cancelTask(scheduler);
+                            Blokeak();
                         }
                     }
                 }
@@ -271,6 +275,19 @@ public void join(Player p, String s){
                 w.dropItemNaturally(iron, new ItemStack(Material.IRON_INGOT));
             }
         }, 0, 60);
+    }
+    public void Blokeak(){
+        Bukkit.getScheduler().cancelTask(scheduler);
+        scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+            World w = urdina.getSpawn().getWorld();
+            @Override
+            public void run(){  
+                for(Block b : blokeak.keySet()){
+                    b.setType(blokeak.get(b));
+                }
+                blokeak.clear();
+            }
+        }, 0, 400);
     }
     public void setScoreBoard(){
         ScoreboardManager manager = Bukkit.getScoreboardManager();
