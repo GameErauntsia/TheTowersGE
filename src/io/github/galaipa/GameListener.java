@@ -198,7 +198,7 @@ public class GameListener implements Listener{
                         e.setCancelled(true);
                     }else if (plugin.getJokalaria(e.getPlayer()).getTeam().getWin().contains(b.getLocation())){
                         e.setCancelled(true);
-                        tantoa(e.getPlayer(),25);
+                        tantoa(e.getPlayer(),75);
                     }else if ((b.getType() == Material.IRON_ORE) 
                             ||(b.getType() == Material.LAPIS_ORE)
                             ||(b.getType() == Material.REDSTONE_ORE)

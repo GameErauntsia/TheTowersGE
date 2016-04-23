@@ -234,6 +234,8 @@ public class Gui implements Listener {
             }
             if(arena2.equalsIgnoreCase("b")){
                 plugin.jokoa = "DestroyTheNexus";
+            }else{
+                plugin.jokoa = "The Towers";
             }
             plugin.start(arena2);
             bozketa.clear();

@@ -41,7 +41,7 @@ public class TheTowersGE extends JavaPlugin{
     Team urdina,gorria;
     Boolean admin,bozketa,itxi,inGame = false;
     Score scoreUrdina,scoreGorria;
-    Location exp,iron,lobby,mainLobby;
+    Location exp,iron,mainLobby,LobbyUr,LobbyGor;
     int scheduler,bozkak;
     Scoreboard board;
     String jokoa = "The Towers";
@@ -153,15 +153,16 @@ public void join(Player p, String s){
         jokalariak.add(j);
         if(s.equalsIgnoreCase("gorria")){
             j.setTeam(gorria);
+            p.teleport(LobbyGor);
             p.sendMessage(ChatColor.GREEN +"["+ jokoa  + "]"+ChatColor.RED + " Talde gorrian sartu zara");
         }else{
             j.setTeam(urdina);
+            p.teleport(LobbyUr);
             p.sendMessage(ChatColor.GREEN +"["+ jokoa  + "]"+ChatColor.BLUE + " Talde urdinean sartu zara");
         }
         if(!inGame){
             Gui.maingui(j);
             setArmour(j);
-            p.teleport(lobby);
         }else{
             teleportSpawn(j);
             p.setScoreboard(board);
@@ -292,7 +293,7 @@ public void join(Player p, String s){
     public void setScoreBoard(){
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         board = manager.getNewScoreboard();
-        Objective objective = board.registerNewObjective(jokoa, "dummy");
+        Objective objective = board.registerNewObjective("TaldeJokoak", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(ChatColor.GOLD + jokoa);
         scoreGorria = objective.getScore(ChatColor.RED + "Gorriak:"); 
@@ -455,12 +456,14 @@ public void join(Player p, String s){
         saveConfig();
    }
    public void loadLobby(){
-        String w22 = getConfig().getString("Lobby.World");
+        /*String w22 = getConfig().getString("Lobby.World");
         Double x22 = getConfig().getDouble("Lobby.X");
         Double y22 = getConfig().getDouble("Lobby.Y");
         Double z22 = getConfig().getDouble("Lobby.Z");
-        lobby =new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22);
-        mainLobby = new Location(getServer().getWorld("Jokoak"),1639,4,94);
+        lobby =new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22);*/
+        mainLobby = new Location(getServer().getWorld("Jokoak"),1641,213,116);
+        LobbyGor = new Location(getServer().getWorld("Jokoak"),1639,213,110);
+        LobbyUr = new Location(getServer().getWorld("Jokoak"),1640,213,121);
    }
    public void loadSpawners(String arena){
         String w= getConfig().getString(arena + ".Spawn.exp.World");
