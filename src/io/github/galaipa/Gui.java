@@ -2,7 +2,6 @@ package io.github.galaipa;
 
 import static io.github.galaipa.GameListener.item;
 import java.util.ArrayList;
-import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,13 +13,16 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 
 
 public class Gui implements Listener {
     static int a = 0;
     static int b = 0;
     ArrayList<Player> botoa = new ArrayList<>();
-     public TheTowersGE plugin;
+    public static TheTowersGE plugin;
     public Gui(TheTowersGE instance) {
             plugin = instance;
         }
@@ -121,13 +123,17 @@ public class Gui implements Listener {
                 ItemStack clicked = event.getCurrentItem(); 
                 event.setCancelled(true);
                 if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "The Towers Klasikoa")){
-                    bozkatu(p,"a");
+                    sa.setScore(sa.getScore()+1);
+                    bozkatu(p);
                 }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "Destroy The Nexus 1")){
-                    bozkatu(p,"b");
+                    sb.setScore(sb.getScore()+1);
+                    bozkatu(p);
                 }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "The Towers 2")){
-                    bozkatu(p,"c");
+                    sc.setScore(sc.getScore()+1);
+                    bozkatu(p);
                 }else if(clicked.getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.GREEN + "The Towers 3")){
-                    bozkatu(p,"d");
+                    sd.setScore(sd.getScore()+1);
+                    bozkatu(p);
                 }
                   
             }
@@ -164,7 +170,6 @@ public class Gui implements Listener {
         mapaGUI.setItem(24,item(Material.STAINED_GLASS_PANE,13,1,ChatColor.RED + "Destroy The Nexus"));
         mapaGUI.setItem(25,item(Material.STAINED_GLASS_PANE,13,1,ChatColor.RED + "Destroy The Nexus"));
         mapaGUI.setItem(26,item(Material.STAINED_GLASS_PANE,13,1,ChatColor.RED + "Destroy The Nexus"));
-
     }
     public static void maingui(Jokalaria j){
         int i;
@@ -207,16 +212,11 @@ public class Gui implements Listener {
               }
           }
       }
-    public HashMap<String, Integer> bozketa = new HashMap<>();
-    public void bozkatu(Player p,String mapa){
+    public void bozkatu(Player p){
         plugin.bozkak++;
         p.closeInventory();
         p.sendMessage(ChatColor.GREEN +"[TaldeJokoak] " + ChatColor.YELLOW + "Jokoa hasteko bozkatu duzu. Jokalarien %60ak bozkatzean hasiko da");
         p.getInventory().setItem(3,item(Material.STAINED_CLAY,5,1,ChatColor.GREEN + "Jokoa hasteko bozkatu duzu"));
-        if(bozketa.get(mapa) == null){
-            bozketa.put(mapa, 0);
-        }
-        bozketa.put(mapa, bozketa.get(mapa)+ 1);
         if(plugin.jokalariak.size() == 1){
             
         }else if(plugin.bozketa){
@@ -224,21 +224,28 @@ public class Gui implements Listener {
         }
         else if(plugin.bozkak *100 / plugin.jokalariak.size() > 50){
             plugin.bozketa = true;
-            Integer arena = 0;
-            String arena2 = "";
-            for(String map : bozketa.keySet()){
-                if(bozketa.get(map) > arena ){
-                    arena2 = map;
-                    arena = bozketa.get(map);
+            Score s2 = sa;
+            for(Score s : scores){
+                if(s.getScore() > s2.getScore()){
+                    s2 = s;
                 }
             }
-            if(arena2.equalsIgnoreCase("b")){
-                plugin.jokoa = "DestroyTheNexus";
-            }else{
+            if(s2.equals(sa)){
                 plugin.jokoa = "The Towers";
+                plugin.start("a");
+            }else if(s2.equals(sb)){
+                plugin.jokoa = "DestroyTheNexus";
+                plugin.start("b");
+            }else if(s2.equals(sc)){
+                plugin.jokoa = "The Towers";
+                plugin.start("c");
+            }else if(s2.equals(sd)){
+                plugin.jokoa = "The Towers";
+                plugin.start("d");
             }
-            plugin.start(arena2);
-            bozketa.clear();
         }
     }
+    public static ArrayList<Score> scores = new ArrayList<>();
+    public static Score sa,sb,sc,sd;
+
 }

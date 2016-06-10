@@ -1,9 +1,10 @@
 package io.github.galaipa;
 
 
+import static io.github.galaipa.TheTowersGE.sendTitle;
 import java.util.HashMap;
-import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand;
-import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand.EnumClientCommand;
+import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand;
+import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand.EnumClientCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -12,7 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -160,6 +161,7 @@ public class GameListener implements Listener{
         if(plugin.getJokalaria(p).getTeam().getID().equalsIgnoreCase("urdina")){
            plugin.scoreUrdina.setScore((plugin.scoreUrdina.getScore()+1)); 
            plugin.Broadcast(ChatColor.BLUE +  p.getName() + "-(e)k tantoa egin du (" + plugin.scoreUrdina.getScore() + ")");
+           sendTitle(p,20,40,20,ChatColor.BLUE + Integer.toString(plugin.scoreUrdina.getScore()),"");
            if(plugin.scoreUrdina.getScore() == Irabazi){
                plugin.amaiera(plugin.urdina,plugin.gorria);
            }
@@ -167,12 +169,13 @@ public class GameListener implements Listener{
         else{
             plugin.scoreGorria.setScore((plugin.scoreGorria.getScore()+1));
             plugin.Broadcast(ChatColor.RED + p.getName() + "-(e)k tantoa egin du (" + plugin.scoreGorria.getScore() + ")");
+            sendTitle(p,20,40,20,ChatColor.RED + Integer.toString(plugin.scoreGorria.getScore()),"");
              if(plugin.scoreGorria.getScore() == Irabazi){
                        plugin.amaiera(plugin.gorria,plugin.urdina);
                    }
         }
         for(Jokalaria j : plugin.jokalariak){
-            j.getPlayer().getWorld().playSound(j.getPlayer().getLocation(),Sound.NOTE_PLING, 10, 1);
+            j.getPlayer().getWorld().playSound(j.getPlayer().getLocation(),Sound.BLOCK_NOTE_BASEDRUM, 10, 1);
         }
      }
       @EventHandler
@@ -243,11 +246,15 @@ public class GameListener implements Listener{
                     plugin.exp = e.getBlock().getLocation();
                     p.sendMessage("Exp");
                     e.setCancelled(true);
-                }/*else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Lobby")){
-                    plugin.lobby = e.getBlock().getLocation();
-                    p.sendMessage("Lobby-a");
+                }else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Spawn (Urdina)")){
+                    plugin.SaveSpawn(arena2, e.getBlock().getLocation(),"urdina");
+                    p.sendMessage("Spawn urdina");
                     e.setCancelled(true);
-                }*/
+                }else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Spawn (Gorria)")){
+                    plugin.SaveSpawn(arena2, e.getBlock().getLocation(),"gorria");
+                    p.sendMessage("Spawn gorria");
+                    e.setCancelled(true);
+                }
                 
                 else if(izena.equalsIgnoreCase(ChatColor.GREEN +"Gorde")){
                     plugin.saveSelection(arena2,"gorria", l1_blue, l2_blue);
@@ -293,7 +300,8 @@ public class GameListener implements Listener{
            inv.addItem(item(Material.STAINED_CLAY,14,1,ChatColor.GREEN + "Point B (Gorria)"));
            inv.addItem(item(Material.STAINED_CLAY,11,1,ChatColor.GREEN + "Point A (Urdina)"));
            inv.addItem(item(Material.STAINED_CLAY,11,1,ChatColor.GREEN + "Point B (Urdina)"));
-          // inv.addItem(item(Material.STAINED_CLAY,7,1,ChatColor.GREEN + "Lobby"));
+           inv.addItem(item(Material.STAINED_CLAY,14,2,ChatColor.GREEN +"Spawn (Gorria)"));
+           inv.addItem(item(Material.STAINED_CLAY,11,2,ChatColor.GREEN +"Spawn (Urdina)"));
            inv.addItem(item(Material.STAINED_CLAY,9,1,ChatColor.GREEN + "Burdina"));
            inv.addItem(item(Material.STAINED_CLAY,1,1,ChatColor.GREEN + "Exp"));
            inv.addItem(item(Material.STAINED_CLAY,13,1,ChatColor.GREEN + "Gorde"));

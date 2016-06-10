@@ -3,11 +3,17 @@ package io.github.galaipa;
 
 import de.goldengamerzone.worldreset.WorldReset;
 import static io.github.galaipa.GameListener.item;
+import static io.github.galaipa.Gui.plugin;
+import static io.github.galaipa.Gui.sa;
+import static io.github.galaipa.Gui.sb;
+import static io.github.galaipa.Gui.sc;
+import static io.github.galaipa.Gui.scores;
+import static io.github.galaipa.Gui.sd;
 import java.util.ArrayList;
 import java.util.HashMap;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
+import net.minecraft.server.v1_9_R2.IChatBaseComponent;
+import net.minecraft.server.v1_9_R2.PacketPlayOutTitle;
+import net.minecraft.server.v1_9_R2.PlayerConnection;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,7 +26,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -41,9 +47,10 @@ public class TheTowersGE extends JavaPlugin{
     Team urdina,gorria;
     Boolean admin,bozketa,itxi,inGame = false;
     Score scoreUrdina,scoreGorria;
+    static ScoreboardManager manager;
     Location exp,iron,mainLobby,LobbyUr,LobbyGor;
     int scheduler,bozkak;
-    Scoreboard board;
+    static Scoreboard board;
     String jokoa = "The Towers";
     @Override
     public void onEnable(){
@@ -144,6 +151,9 @@ public class TheTowersGE extends JavaPlugin{
         bozkak = 0;
         bozketa = false;
         GameListener.map.clear();
+        manager = Bukkit.getScoreboardManager();
+        board = manager.getNewScoreboard();
+        setMapScoreBoard();
 }
 public void join(Player p, String s){
         if(jokalariak.isEmpty()){
@@ -163,6 +173,7 @@ public void join(Player p, String s){
         if(!inGame){
             Gui.maingui(j);
             setArmour(j);
+            p.setScoreboard(board);
         }else{
             teleportSpawn(j);
             p.setScoreboard(board);
@@ -238,7 +249,7 @@ public void join(Player p, String s){
                     for(Jokalaria j : jokalariak){
                         Player p = j.getPlayer();
                         p.setLevel(countdown);
-                        p.getWorld().playSound(p.getLocation(),Sound.NOTE_STICKS, 10, 1);
+                        p.getWorld().playSound(p.getLocation(),Sound.BLOCK_NOTE_BASEDRUM, 10, 1);
                         sendTitle(p,20,40,20,ChatColor.YELLOW + Integer.toString(countdown),"");
                     }
                     countdown--;
@@ -291,7 +302,6 @@ public void join(Player p, String s){
         }, 0, 400);
     }
     public void setScoreBoard(){
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
         board = manager.getNewScoreboard();
         Objective objective = board.registerNewObjective("TaldeJokoak", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -456,11 +466,6 @@ public void join(Player p, String s){
         saveConfig();
    }
    public void loadLobby(){
-        /*String w22 = getConfig().getString("Lobby.World");
-        Double x22 = getConfig().getDouble("Lobby.X");
-        Double y22 = getConfig().getDouble("Lobby.Y");
-        Double z22 = getConfig().getDouble("Lobby.Z");
-        lobby =new Location(Bukkit.getServer().getWorld(w22), x22, y22, z22);*/
         mainLobby = new Location(getServer().getWorld("Jokoak"),1641,213,116);
         LobbyGor = new Location(getServer().getWorld("Jokoak"),1639,213,110);
         LobbyUr = new Location(getServer().getWorld("Jokoak"),1640,213,121);
@@ -503,4 +508,16 @@ public void join(Player p, String s){
     }
     private GEAPI GEAPI;
     
+    public static void setMapScoreBoard(){
+        board = manager.getNewScoreboard();
+        Objective objective = board.registerNewObjective("TaldeJokoakMapa", "dummy");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.setDisplayName(ChatColor.GOLD + "Mapa aukeratu");
+        sa = objective.getScore(ChatColor.RED + "TT 1:"); 
+        sc = objective.getScore(ChatColor.RED + "TT 2:");
+        sd = objective.getScore(ChatColor.RED + "TT 3:");
+        sb = objective.getScore(ChatColor.BLUE + "DTN 1:");
+        sa.setScore(0); sb.setScore(0); sc.setScore(0); sd.setScore(0);
+        scores.add(sa);scores.add(sb);scores.add(sc);scores.add(sd);
+        }
 }
